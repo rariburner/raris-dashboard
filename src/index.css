@@ -4,3 +4,4 @@ body { margin: 0; padding: 0; background: #0D0D0D; }
 button, div, input, textarea, select { outline: none; }
 svg { outline: none; } .recharts-wrapper { outline: none; }
 .recharts-bar-rectangle { outline: none; } .recharts-rectangle { outline: none; }
+.recharts-layer { outline: none; } path { outline: none; }
