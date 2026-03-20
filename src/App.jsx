@@ -354,7 +354,7 @@ function Revenue() {
       <div style={{background:C.card,borderRadius:18,padding:"26px 28px",marginBottom:28,border:`1px solid ${C.border}`}}>
         <h2 style={{fontSize:20,fontWeight:800,color:"#fff",marginBottom:24}}>Monthly Revenue</h2>
         <ResponsiveContainer width="100%" height={260}>
-          <BarChart data={revenueData} onMouseLeave={()=>setActiveIdx(null)} barCategoryGap="30%">
+          <BarChart data={revenueData} style={{outline:"none"}} tabIndex={-1} onMouseLeave={()=>setActiveIdx(null)} barCategoryGap="30%">
             <XAxis dataKey="day" axisLine={false} tickLine={false} tick={{fill:C.muted,fontSize:12}}/>
             <YAxis axisLine={false} tickLine={false} tick={{fill:C.muted,fontSize:12}} tickFormatter={v=>`$${v}`}/>
             <Tooltip content={<CustomTooltip/>} cursor={false}/>
