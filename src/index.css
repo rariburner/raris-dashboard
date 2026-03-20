@@ -5,3 +5,4 @@ button, div, input, textarea, select { outline: none; }
 svg { outline: none; } .recharts-wrapper { outline: none; }
 .recharts-bar-rectangle { outline: none; } .recharts-rectangle { outline: none; }
 .recharts-layer { outline: none; } path { outline: none; }
+*:focus { outline: none; }
