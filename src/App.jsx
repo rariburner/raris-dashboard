@@ -665,7 +665,9 @@ export default function RarisDashboard() {
     {id:3,type:"inactive",message:"@bonusfootage inactive for 6 days",time:"6:01 AM",read:true},
   ]);
   const [showNotifs, setShowNotifs] = useState(false);
+  const [notifFilter, setNotifFilter] = useState("All");
   const unreadCount = notifications.filter(n => !n.read).length;
+  const markAllRead = () => setNotifications(prev => prev.map(n => ({...n, read: true})));
   const nav = [
     {id:"dashboard",label:"Dashboard",icon:"⊞"},
     {id:"intelligence",label:"Intelligence",icon:"◎"},
@@ -707,13 +709,36 @@ export default function RarisDashboard() {
             <span style={{fontSize:16}}>🔔</span>
             {unreadCount>0 && <span style={{background:"#FF6B00",color:"#fff",fontSize:10,fontWeight:800,borderRadius:99,padding:"2px 6px",marginLeft:2}}>{unreadCount}</span>}
           </div>
-          {showNotifs && <div style={{position:"absolute",top:44,right:24,background:"#1E1E1E",border:"1px solid rgba(255,255,255,0.07)",borderRadius:14,padding:16,width:320,zIndex:999}}>
-            <div style={{fontSize:14,fontWeight:800,color:"#fff",marginBottom:12}}>Notifications</div>
-            {notifications.map(n=>(<div key={n.id} onClick={()=>setNotifications(prev=>prev.map(x=>x.id===n.id?{...x,read:true}:x))} style={{padding:"10px 12px",borderRadius:10,background:n.read?"transparent":"rgba(255,107,0,0.08)",marginBottom:6,cursor:"pointer",border:"1px solid rgba(255,255,255,0.05)"}}>
-              <div style={{fontSize:12,fontWeight:700,color:n.read?"#888":"#fff",marginBottom:2}}>{n.message}</div>
-              <div style={{fontSize:11,color:"#888"}}>{n.time}</div>
-            </div>))}
-            {notifications.length===0 && <div style={{fontSize:13,color:"#888",textAlign:"center",padding:"20px 0"}}>No notifications</div>}
+          {showNotifs && <div style={{position:"absolute",top:44,right:24,background:"#161616",border:"1px solid rgba(255,255,255,0.1)",borderRadius:16,width:360,zIndex:999,boxShadow:"0 20px 60px rgba(0,0,0,0.5)"}}>
+            <div style={{padding:"16px 16px 0"}}>
+              <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:12}}>
+                <div style={{fontSize:16,fontWeight:800,color:"#fff"}}>Notifications</div>
+                <button onClick={markAllRead} style={{background:"transparent",border:"none",color:"#888",fontSize:12,cursor:"pointer",padding:4}}>↺ Refresh</button>
+              </div>
+              <div style={{display:"flex",gap:6,marginBottom:12}}>
+                {["All","Content","Personal","System"].map(f=>{
+                  const count = f==="All"?notifications.length:notifications.filter(n=>n.category===f.toLowerCase()).length;
+                  return <button key={f} onClick={()=>setNotifFilter(f)} style={{background:notifFilter===f?"#FF6B00":"#1E1E1E",border:"1px solid "+(notifFilter===f?"#FF6B00":"rgba(255,255,255,0.07)"),borderRadius:20,padding:"4px 10px",color:notifFilter===f?"#fff":"#888",fontSize:11,fontWeight:700,cursor:"pointer"}}>{f} {count}</button>
+                })}
+              </div>
+            </div>
+            <div style={{maxHeight:360,overflowY:"auto",padding:"0 16px"}}>
+              {notifications.filter(n=>notifFilter==="All"||n.category===notifFilter.toLowerCase()).map(n=>(
+                <div key={n.id} onClick={()=>setNotifications(prev=>prev.map(x=>x.id===n.id?{...x,read:true}:x))} style={{display:"flex",gap:12,alignItems:"flex-start",padding:"12px 0",borderBottom:"1px solid rgba(255,255,255,0.05)",cursor:"pointer"}}>
+                  <div style={{width:36,height:36,borderRadius:10,background:n.read?"#1E1E1E":"rgba(255,107,0,0.15)",display:"flex",alignItems:"center",justifyContent:"center",fontSize:16,flexShrink:0}}>{n.type==="scrape_complete"?"⚡":n.type==="ideas_ready"?"💡":n.type==="inactive"?"⚠️":"🔔"}</div>
+                  <div style={{flex:1}}>
+                    <div style={{fontSize:13,fontWeight:n.read?400:700,color:n.read?"#888":"#fff",lineHeight:1.4,marginBottom:3}}>{n.message}</div>
+                    <div style={{fontSize:11,color:"#555"}}>{n.time}</div>
+                  </div>
+                  {!n.read && <div style={{width:8,height:8,borderRadius:"50%",background:"#FF6B00",flexShrink:0,marginTop:4}}/>}
+                </div>
+              ))}
+              {notifications.length===0 && <div style={{fontSize:13,color:"#888",textAlign:"center",padding:"20px 0"}}>No notifications</div>}
+            </div>
+            <div style={{display:"flex",justifyContent:"space-between",padding:"12px 16px",borderTop:"1px solid rgba(255,255,255,0.07)"}}>
+              <button onClick={markAllRead} style={{background:"transparent",border:"none",color:"#888",fontSize:12,cursor:"pointer"}}>Mark all as read</button>
+              <button style={{background:"transparent",border:"none",color:"#FF6B00",fontSize:12,fontWeight:700,cursor:"pointer"}}>View all</button>
+            </div>
           </div>}
         </div>
         {pages[active]}
