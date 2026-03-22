@@ -45,6 +45,16 @@ export async function getIntelligence() {
   return res.json();
 }
 
+export async function getPipeline() {
+  const res = await fetch(`${API_URL}/api/pipeline`, { headers: { "ngrok-skip-browser-warning": "true" } });
+  return res.json();
+}
+
+export async function savePipeline(pipeline) {
+  const res = await fetch(`${API_URL}/api/pipeline`, { method: "POST", headers: { "Content-Type": "application/json", "ngrok-skip-browser-warning": "true" }, body: JSON.stringify(pipeline) });
+  return res.json();
+}
+
 export async function getSakuraStatus() {
   const res = await fetch(`${API_URL}/api/sakura-status`, { headers: { "ngrok-skip-browser-warning": "true" } });
   return res.json();

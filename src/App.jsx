@@ -2,7 +2,7 @@ import IdeasBank from "./IdeasBank.jsx";
 import Scripts from "./Scripts.jsx";
 import Board from "./Board.jsx";
 import { useState, useEffect } from "react";
-import { getIdeas, getNotifications, getStatus, pauseScraping, resumeScraping, scrapeNow, analyzeNow, generateScript, getIntelligence, getProfile, generateSessionBrief, getSakuraStatus } from "./api.js";
+import { getIdeas, getNotifications, getStatus, pauseScraping, resumeScraping, scrapeNow, analyzeNow, generateScript, getIntelligence, getProfile, generateSessionBrief, getSakuraStatus, getPipeline, savePipeline } from "./api.js";
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Cell } from "recharts";
 
 const C = {
@@ -54,14 +54,22 @@ function Dashboard({realIdeas=[], lastUpdated=null, profileData={followers:0,pos
     {id:5,label:"Script tomorrow's content",done:false},{id:6,label:"Update course module",done:false},
     {id:7,label:"Check ManyChat leads",done:false},
   ]);
-  const [pipeline] = useState([
-    {id:1,hook:"5 mistakes killing your content",format:"Talking Head",cta:"Download Guide",status:"idea"},
-    {id:2,hook:"How I made $10k in 30 days",format:"Value",cta:"Course Link",status:"idea"},
-    {id:3,hook:"Why most creators fail",format:"Silent",cta:"Watch Now",status:"scripted"},
-    {id:4,hook:"The algorithm changed again",format:"Trending Audio",cta:"Learn More",status:"recorded"},
-    {id:5,hook:"My daily routine exposed",format:"Talking Head",cta:"Free PDF",status:"recorded"},
-    {id:6,hook:"3 tools I use every day",format:"Value",cta:"Tool Links",status:"posted"},
-  ]);
+  const [pipeline, setPipeline] = useState([]);
+  const [pipelineLoaded, setPipelineLoaded] = useState(false);
+  useEffect(() => {
+    getPipeline().then(data => { if(Array.isArray(data)) setPipeline(data); setPipelineLoaded(true); }).catch(() => setPipelineLoaded(true));
+  }, []);
+  const movePipelineItem = (id, newStatus) => {
+    const updated = pipeline.map(p => p.id === id ? {...p, status: newStatus} : p);
+    setPipeline(updated);
+    savePipeline(updated).catch(() => {});
+  };
+  const addPipelineItem = (hook, format) => {
+    const newItem = {id: Date.now(), hook, format: format||'Talking Head', cta: 'Comment VIRAL', status: 'idea'};
+    const updated = [...pipeline, newItem];
+    setPipeline(updated);
+    savePipeline(updated).catch(() => {});
+  };
   const defaultIdeas = [
     {hook:"AI creators are going viral. Real creators are going broke. Here's why.",format:"Talking Head"},
     {hook:"Hot take: brand deals are making creators broke and they don't even know it",format:"Value"},
