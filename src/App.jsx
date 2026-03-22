@@ -2,7 +2,7 @@ import IdeasBank from "./IdeasBank.jsx";
 import Scripts from "./Scripts.jsx";
 import Board from "./Board.jsx";
 import { useState, useEffect } from "react";
-import { getIdeas, getNotifications, getStatus, pauseScraping, resumeScraping, scrapeNow, analyzeNow, generateScript, getIntelligence } from "./api.js";
+import { getIdeas, getNotifications, getStatus, pauseScraping, resumeScraping, scrapeNow, analyzeNow, generateScript, getIntelligence, getProfile } from "./api.js";
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Cell } from "recharts";
 
 const C = {
@@ -485,18 +485,18 @@ function Revenue() {
   );
 }
 
-function Goals() {
+function Goals({profileData={followers:0,posts:0,lastUpdated:null}}) {
   const bangkokDays = Math.ceil((new Date("2026-08-01")-new Date())/(1000*60*60*24));
   const goals = [
-    {label:"Followers",icon:"📈",current:0,target:250000,unit:"",deadline:"Dec 2026",color:C.orange,bg:"#FF6B0022"},
+    {label:"Followers",icon:"📈",current:profileData.followers||0,target:250000,unit:"",deadline:"Dec 2026",color:C.orange,bg:"#FF6B0022"},
     {label:"Monthly Revenue",icon:"💰",current:0,target:25000,unit:"$",deadline:"Aug 2026",color:C.green,bg:"#00D08422"},
     {label:"Course Sales",icon:"🛒",current:0,target:50,unit:"",deadline:"Jun 2026",color:C.purple,bg:"#7C3AED22"},
-    {label:"Posts This Month",icon:"📄",current:0,target:120,unit:"",deadline:"Mar 31, 2026",color:C.blue,bg:"#3B82F622"},
+    {label:"Posts This Month",icon:"📄",current:profileData.posts||0,target:120,unit:"",deadline:"Mar 31, 2026",color:C.blue,bg:"#3B82F622"},
   ];
   return (
     <div style={{padding:"36px 40px",overflowY:"auto",height:"100%"}}>
       <h1 style={{fontSize:40,fontWeight:900,color:"#fff",marginBottom:4,letterSpacing:-0.5}}>Goals</h1>
-      <div style={{fontSize:14,color:C.muted,marginBottom:36}}>The scoreboard</div>
+      <div style={{fontSize:14,color:C.muted,marginBottom:36}}>The scoreboard{profileData.lastUpdated && <span style={{marginLeft:16,fontSize:12,color:"#555"}}>Last Updated: {profileData.lastUpdated}</span>}</div>
       <div style={{display:"flex",flexDirection:"column",gap:14,marginBottom:28}}>
         {goals.map((g,i)=>{
           const pct = g.target>0?Math.min((g.current/g.target)*100,100):0;
@@ -755,6 +755,7 @@ export default function RarisDashboard() {
   const [realIdeas, setRealIdeas] = useState([]);
   const [apiOnline, setApiOnline] = useState(false);
   const [ideasLastUpdated, setIdeasLastUpdated] = useState(null);
+  const [profileData, setProfileData] = useState({ followers: 0, posts: 0, lastUpdated: null });
 
   useEffect(() => {
     getStatus().then(s => {
@@ -765,6 +766,7 @@ export default function RarisDashboard() {
       if (d.ideas && d.ideas.length > 0) setRealIdeas(d.ideas);
       if (d.lastUpdated) setIdeasLastUpdated(d.lastUpdated);
     }).catch(() => {});
+    getProfile().then(d => { if(d) setProfileData(d); }).catch(() => {});
     getNotifications().then(n => {
       if (n && n.length > 0) setNotifications(n.map((notif, i) => ({...notif, id: i+1, read: notif.read || false})));
     }).catch(() => {});
@@ -793,7 +795,7 @@ export default function RarisDashboard() {
   ];
   const pages = {
     dashboard:<Dashboard realIdeas={realIdeas} lastUpdated={ideasLastUpdated}/>,intelligence:<Intelligence/>,
-    revenue:<Revenue/>,goals:<Goals/>,
+    revenue:<Revenue/>,goals:<Goals profileData={profileData}/>,
     sakuraos:<SakuraOS/>,ideasbank:<IdeasBank/>,scripts:<Scripts/>,board:<Board/>,settings:<Settings scrapePaused={scrapePaused} setScrapePaused={setScrapePaused}/>
   };
   return (

@@ -35,6 +35,11 @@ export async function generateScript(hook, format, cta, notes, existingScript) {
   return res.json();
 }
 
+export async function getProfile() {
+  const res = await fetch(`${API_URL}/api/profile`, { headers: { "ngrok-skip-browser-warning": "true" } });
+  return res.json();
+}
+
 export async function getIntelligence() {
   const res = await fetch(`${API_URL}/api/intelligence`, { headers: { 'ngrok-skip-browser-warning': 'true' } });
   return res.json();
