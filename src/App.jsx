@@ -45,7 +45,7 @@ const CustomTooltip = ({active,payload}) => {
   );
 };
 
-function Dashboard({realIdeas=[], lastUpdated=null}) {
+function Dashboard({realIdeas=[], lastUpdated=null, profileData={followers:0,posts:0,postsThisMonth:0}}) {
   const [scriptModal, setScriptModal] = useState(null);
   const [scriptLoading, setScriptLoading] = useState(false);
   const [missions, setMissions] = useState([
@@ -110,10 +110,10 @@ function Dashboard({realIdeas=[], lastUpdated=null}) {
       <h1 style={{fontSize:48,fontWeight:900,color:"#fff",marginBottom:32,letterSpacing:-1,lineHeight:1}}>Good morning, Mike.</h1>
       <div style={{display:"grid",gridTemplateColumns:"repeat(4,1fr)",gap:16,marginBottom:36}}>
         {[
-          {label:"Followers",val:"—",sub:"Update via Sakura",grad:"linear-gradient(135deg,#FF6B00,#DC2626)"},
+          {label:"Followers",val:profileData.followers?profileData.followers.toLocaleString():"—",sub:"@realmikerari",grad:"linear-gradient(135deg,#FF6B00,#DC2626)"},
           {label:"Monthly Views",val:"—",sub:"Connect analytics",grad:"linear-gradient(135deg,#7C3AED,#3B82F6)"},
           {label:"Course Revenue",val:"$0",sub:"0 sales this month",grad:"linear-gradient(135deg,#00D084,#0891B2)"},
-          {label:"Posts Published",val:"0",sub:"0 this month",grad:null},
+          {label:"Posts Published",val:(profileData.postsThisMonth||0).toString(),sub:"This month",grad:null},
         ].map((s,i)=>(
           <div key={i} style={{background:s.grad||C.card,backgroundImage:s.grad,borderRadius:18,padding:"24px 22px",border:s.grad?"none":`1px solid ${C.border}`}}>
             <div style={{fontSize:13,color:s.grad?"rgba(255,255,255,0.75)":C.muted,marginBottom:8}}>{s.label}</div>
@@ -806,7 +806,7 @@ export default function RarisDashboard() {
     {id:"settings",label:"Settings",icon:"⚙"},
   ];
   const pages = {
-    dashboard:<Dashboard realIdeas={realIdeas} lastUpdated={ideasLastUpdated}/>,intelligence:<Intelligence/>,
+    dashboard:<Dashboard realIdeas={realIdeas} lastUpdated={ideasLastUpdated} profileData={profileData}/>,intelligence:<Intelligence/>,
     revenue:<Revenue/>,goals:<Goals profileData={profileData}/>,
     sakuraos:<SakuraOS/>,ideasbank:<IdeasBank/>,scripts:<Scripts/>,board:<Board/>,settings:<Settings scrapePaused={scrapePaused} setScrapePaused={setScrapePaused}/>
   };
