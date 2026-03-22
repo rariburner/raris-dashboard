@@ -1,6 +1,7 @@
 import IdeasBank from "./IdeasBank.jsx";
 import Board from "./Board.jsx";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { getIdeas, getNotifications, getStatus, pauseScraping, resumeScraping, scrapeNow, analyzeNow } from "./api.js";
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Cell } from "recharts";
 
 const C = {
@@ -644,7 +645,7 @@ function Settings({scrapePaused, setScrapePaused}) {
             <div style={{fontSize:14,fontWeight:600,color:"#fff",marginBottom:3}}>Daily Scraping</div>
             <div style={{fontSize:13,color:C.muted}}>{scrapePaused?"Paused — no credits being used":"Active — scraping 18 accounts at 6am PT"}</div>
           </div>
-          <div onClick={()=>setScrapePaused(!scrapePaused)} style={{display:"flex",alignItems:"center",gap:10,cursor:"pointer",background:scrapePaused?"rgba(239,68,68,0.1)":"rgba(0,208,132,0.1)",border:"1px solid "+(scrapePaused?"#EF4444":"#00D084"),borderRadius:10,padding:"8px 16px"}}>
+          <div onClick={()=>{ if(scrapePaused){ resumeScraping().then(()=>setScrapePaused(false)); } else { pauseScraping().then(()=>setScrapePaused(true)); } }} style={{display:"flex",alignItems:"center",gap:10,cursor:"pointer",background:scrapePaused?"rgba(239,68,68,0.1)":"rgba(0,208,132,0.1)",border:"1px solid "+(scrapePaused?"#EF4444":"#00D084"),borderRadius:10,padding:"8px 16px"}}>
             <div style={{width:8,height:8,borderRadius:"50%",background:scrapePaused?"#EF4444":"#00D084"}}/>
             <span style={{fontSize:13,fontWeight:700,color:scrapePaused?"#EF4444":"#00D084"}}>{scrapePaused?"Paused":"Active"}</span>
           </div>
@@ -679,6 +680,21 @@ function Settings({scrapePaused, setScrapePaused}) {
 
 export default function RarisDashboard() {
   const [active,setActive] = useState("dashboard");
+  const [realIdeas, setRealIdeas] = useState([]);
+  const [apiOnline, setApiOnline] = useState(false);
+
+  useEffect(() => {
+    getStatus().then(s => {
+      setApiOnline(true);
+      setScrapePaused(s.scrapePaused);
+    }).catch(() => setApiOnline(false));
+    getIdeas().then(d => {
+      if (d.ideas && d.ideas.length > 0) setRealIdeas(d.ideas);
+    }).catch(() => {});
+    getNotifications().then(n => {
+      if (n && n.length > 0) setNotifications(n.map((notif, i) => ({...notif, id: i+1, read: notif.read || false})));
+    }).catch(() => {});
+  }, []);
   const [scrapePaused, setScrapePaused] = useState(false);
 
   const [notifications, setNotifications] = useState([
