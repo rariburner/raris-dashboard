@@ -240,8 +240,25 @@ function Dashboard({realIdeas=[], lastUpdated=null}) {
 
 function Intelligence() {
   const [filter,setFilter] = useState("All");
+  const [intelData, setIntelData] = useState(null);
+  const [lastUpdated, setLastUpdated] = useState(null);
   const filters = ["All","Talking Head","Value","Silent","Trending Audio"];
-  const content = [
+
+  useEffect(() => {
+    getIntelligence().then(d => {
+      setIntelData(d);
+      setLastUpdated(d.stats?.lastUpdated || null);
+    }).catch(() => {});
+  }, []);
+
+  const content = intelData?.topContent?.map(r => ({
+    account: "@" + r.account,
+    plays: r.plays >= 1000000 ? (r.plays/1000000).toFixed(1)+"M" : r.plays >= 1000 ? (r.plays/1000).toFixed(0)+"K" : r.plays.toString(),
+    hook: r.caption || r.transcript?.substring(0, 80) || "No caption",
+    format: "Talking Head",
+    isNew: true,
+    url: r.url,
+  })) || [
     {account:"@therealbrianmark",plays:"2.5M",hook:"Dm me '10k' to grow your fitness business",format:"Value",isNew:true},
     {account:"@jun_yuh",plays:"939K",hook:"if i had to restart from zero......",format:"Talking Head",isNew:false},
     {account:"@meagnunez",plays:"720K",hook:"Most creators are posting. You should be building a money machine.",format:"Value",isNew:true},
@@ -251,7 +268,17 @@ function Intelligence() {
     {account:"@personalbrandlaunch",plays:"385K",hook:"0 to 10,000 in a Month",format:"Value",isNew:true},
     {account:"@brandonfergg",plays:"302K",hook:"The day I stopped copying other creators was the day everything changed",format:"Trending Audio",isNew:false},
   ];
-  const leaderboard = [
+  const leaderboard = intelData?.leaderboard?.map((r,i) => ({
+    rank: i+1,
+    account: "@"+r.account,
+    hook: r.url ? r.account : r.account,
+    plays: r.topPlays >= 1000000 ? (r.topPlays/1000000).toFixed(1)+"M" : (r.topPlays/1000).toFixed(0)+"K",
+    followers: "—",
+    score: r.score,
+    format: "Talking Head",
+    isMe: r.account === "realmikerari",
+    url: r.url,
+  })) || [
     {rank:1,account:"@therealbrianmark",hook:"Dm me '10k' to grow...",plays:"2.5M",followers:"480K",score:98,format:"Value",isMe:false},
     {rank:2,account:"@ginnyfears",hook:"This simple shift changed...",plays:"840K",followers:"200K",score:91,format:"Talking Head",isMe:false},
     {rank:3,account:"@realmikerari",hook:"The TOGI Mentality needs to be studied",plays:"837K",followers:"—",score:88,format:"Talking Head",isMe:true},
@@ -264,12 +291,12 @@ function Intelligence() {
   return (
     <div style={{padding:"36px 40px",overflowY:"auto",height:"100%"}}>
       <h1 style={{fontSize:40,fontWeight:900,color:"#fff",marginBottom:6,letterSpacing:-0.5}}>Content Intelligence</h1>
-      <div style={{fontSize:14,color:C.muted,marginBottom:32}}>Bi-weekly report — updated {new Date().toLocaleDateString("en-US",{month:"long",day:"numeric",year:"numeric"})}</div>
+      <div style={{fontSize:14,color:C.muted,marginBottom:32}}>Last Updated: {lastUpdated || new Date().toLocaleDateString("en-US",{month:"long",day:"numeric",year:"numeric"})}</div>
       <div style={{display:"grid",gridTemplateColumns:"repeat(3,1fr)",gap:16,marginBottom:28}}>
         {[
           {label:"Trending formats this week",val:"Talking Head + Value",tags:["Talking Head","Value"]},
-          {label:"Highest virality score in niche",val:"98",sub:"@therealbrianmark"},
-          {label:"New outlier accounts detected",val:"4",sub:"↗ +1 from last week",green:true},
+          {label:"Highest virality score in niche",val:intelData?.stats?.topViralScore?.toString()||"98",sub:"@"+(intelData?.stats?.topViralAccount||"therealbrianmark")},
+          {label:"Total reels tracked",val:intelData?.stats?.totalReels?.toString()||"194",sub:intelData?.stats?.totalAccounts+" accounts",green:true},
         ].map((s,i)=>(
           <div key={i} style={{background:C.card,borderRadius:16,padding:24,border:`1px solid ${C.border}`}}>
             <div style={{fontSize:13,color:C.muted,marginBottom:10}}>{s.label}</div>
