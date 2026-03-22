@@ -668,8 +668,8 @@ function Settings({scrapePaused, setScrapePaused}) {
         ))}
       </div>
       <div style={{display:"flex",gap:12}}>
-        <button style={{background:C.orange,border:"none",color:"#fff",borderRadius:10,padding:"14px 28px",fontSize:14,fontWeight:800,cursor:"pointer"}}>Save Changes</button>
-        <button style={{background:C.card2,border:`1px solid ${C.border}`,color:"#fff",borderRadius:10,padding:"14px 28px",fontSize:14,cursor:"pointer"}}>Cancel</button>
+        <button onClick={handleSave} style={{background:saved?"#00D084":C.orange,border:"none",color:"#fff",borderRadius:10,padding:"14px 28px",fontSize:14,fontWeight:800,cursor:"pointer",transition:"background 0.3s"}}>{saved?"Saved!":"Save Changes"}</button>
+        <button onClick={()=>window.location.reload()} style={{background:C.card2,border:`1px solid ${C.border}`,color:"#fff",borderRadius:10,padding:"14px 28px",fontSize:14,cursor:"pointer"}}>Cancel</button>
       </div>
     </div>
   );
