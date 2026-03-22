@@ -255,7 +255,7 @@ function Intelligence() {
     account: "@" + r.account,
     plays: r.plays >= 1000000 ? (r.plays/1000000).toFixed(1)+"M" : r.plays >= 1000 ? (r.plays/1000).toFixed(0)+"K" : r.plays.toString(),
     hook: r.caption || r.transcript?.substring(0, 80) || "No caption",
-    format: "Talking Head",
+    format: r.format || "Talking Head",
     isNew: true,
     url: r.url,
   })) || [
@@ -294,7 +294,7 @@ function Intelligence() {
       <div style={{fontSize:14,color:C.muted,marginBottom:32}}>Last Updated: {lastUpdated || new Date().toLocaleDateString("en-US",{month:"long",day:"numeric",year:"numeric"})}</div>
       <div style={{display:"grid",gridTemplateColumns:"repeat(3,1fr)",gap:16,marginBottom:28}}>
         {[
-          {label:"Trending formats this week",val:"Talking Head + Value",tags:["Talking Head","Value"]},
+          {label:"Trending formats this week",val:(intelData?.stats?.trendingFormats||["Talking Head","Value"]).join(" + "),tags:(intelData?.stats?.trendingFormats||["Talking Head","Value"])},
           {label:"Highest virality score in niche",val:intelData?.stats?.topViralScore?.toString()||"98",sub:"@"+(intelData?.stats?.topViralAccount||"therealbrianmark")},
           {label:"Total reels tracked",val:intelData?.stats?.totalReels?.toString()||"194",sub:intelData?.stats?.totalAccounts+" accounts",green:true},
         ].map((s,i)=>(
@@ -325,7 +325,7 @@ function Intelligence() {
               <div style={{display:"flex",alignItems:"center",justifyContent:"space-between"}}>
                 <Tag label={item.format}/>
                 <div style={{display:"flex",gap:14}}>
-                  <span style={{fontSize:13,color:C.muted,cursor:"pointer"}}>⬡ Watch</span>
+                  <a href={item.url} target="_blank" rel="noopener noreferrer" style={{fontSize:13,color:C.muted,cursor:"pointer",textDecoration:"none"}}>⬡ Watch</a>
                   <span style={{fontSize:13,color:C.orange,cursor:"pointer",fontWeight:700}}>✦ Mike Rari-ify</span>
                 </div>
               </div>
