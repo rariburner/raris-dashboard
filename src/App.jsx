@@ -271,10 +271,11 @@ function Intelligence() {
   const leaderboard = intelData?.leaderboard?.map((r,i) => ({
     rank: i+1,
     account: "@"+r.account,
-    hook: r.url ? r.account : r.account,
+    hook: r.url || "",
     plays: r.topPlays >= 1000000 ? (r.topPlays/1000000).toFixed(1)+"M" : (r.topPlays/1000).toFixed(0)+"K",
     followers: "—",
     score: r.score,
+    tier: r.tier || "Established",
     format: "Talking Head",
     isMe: r.account === "realmikerari",
     url: r.url,
@@ -334,7 +335,21 @@ function Intelligence() {
         </div>
       </div>
       <div style={{background:C.card,borderRadius:18,padding:"26px 28px",border:`1px solid ${C.border}`}}>
-        <h2 style={{fontSize:20,fontWeight:800,color:"#fff",marginBottom:22}}>Virality Score Leaderboard</h2>
+        <div style={{display:"flex",alignItems:"center",gap:10,marginBottom:22}}>
+          <h2 style={{fontSize:20,fontWeight:800,color:"#fff",margin:0}}>Virality Score Leaderboard</h2>
+          <div style={{position:"relative",display:"inline-block"}} onMouseEnter={e=>e.currentTarget.querySelector(".legend").style.display="block"} onMouseLeave={e=>e.currentTarget.querySelector(".legend").style.display="none"}>
+            <span style={{fontSize:12,color:C.muted,cursor:"help",border:"1px solid rgba(255,255,255,0.15)",borderRadius:"50%",width:18,height:18,display:"inline-flex",alignItems:"center",justifyContent:"center"}}>i</span>
+            <div className="legend" style={{display:"none",position:"absolute",left:0,top:24,background:"#1E1E1E",border:"1px solid rgba(255,255,255,0.1)",borderRadius:12,padding:"14px 16px",width:280,zIndex:100}}>
+              <div style={{fontSize:12,fontWeight:700,color:"#fff",marginBottom:10}}>How scores work</div>
+              <div style={{fontSize:11,color:C.muted,lineHeight:1.6,marginBottom:10}}>Score = median plays (50%) + engagement rate (30%) + hit rate — % of reels over 500K (20%)</div>
+              <div style={{display:"flex",flexDirection:"column",gap:6}}>
+                <div style={{display:"flex",alignItems:"center",gap:8}}><span style={{background:"rgba(255,107,0,0.15)",color:C.orange,fontSize:10,fontWeight:700,padding:"2px 8px",borderRadius:4}}>Outlier</span><span style={{fontSize:11,color:C.muted}}>Score 75-100 — exceptional, rare</span></div>
+                <div style={{display:"flex",alignItems:"center",gap:8}}><span style={{background:"rgba(0,208,132,0.15)",color:C.green,fontSize:10,fontWeight:700,padding:"2px 8px",borderRadius:4}}>Viral</span><span style={{fontSize:11,color:C.muted}}>Score 40-74 — consistently breaking through</span></div>
+                <div style={{display:"flex",alignItems:"center",gap:8}}><span style={{background:"rgba(255,255,255,0.08)",color:"#888",fontSize:10,fontWeight:700,padding:"2px 8px",borderRadius:4}}>Established</span><span style={{fontSize:11,color:C.muted}}>Score 0-39 — reliable, consistent</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
         <table style={{width:"100%",borderCollapse:"collapse"}}>
           <thead>
             <tr style={{borderBottom:`1px solid ${C.border}`}}>
