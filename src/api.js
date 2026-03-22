@@ -45,6 +45,16 @@ export async function getIntelligence() {
   return res.json();
 }
 
+export async function getPriorities() {
+  const res = await fetch(`${API_URL}/api/priorities`, { headers: { "ngrok-skip-browser-warning": "true" } });
+  return res.json();
+}
+
+export async function savePriorities(priorities) {
+  const res = await fetch(`${API_URL}/api/priorities`, { method: "POST", headers: { "Content-Type": "application/json", "ngrok-skip-browser-warning": "true" }, body: JSON.stringify(priorities) });
+  return res.json();
+}
+
 export async function getMissions() {
   const res = await fetch(`${API_URL}/api/missions`, { headers: { "ngrok-skip-browser-warning": "true" } });
   return res.json();

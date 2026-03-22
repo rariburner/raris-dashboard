@@ -2,7 +2,7 @@ import IdeasBank from "./IdeasBank.jsx";
 import Scripts from "./Scripts.jsx";
 import Board from "./Board.jsx";
 import { useState, useEffect } from "react";
-import { getIdeas, getNotifications, getStatus, pauseScraping, resumeScraping, scrapeNow, analyzeNow, generateScript, getIntelligence, getProfile, generateSessionBrief, getSakuraStatus, getPipeline, savePipeline, getMissions, saveMissions } from "./api.js";
+import { getIdeas, getNotifications, getStatus, pauseScraping, resumeScraping, scrapeNow, analyzeNow, generateScript, getIntelligence, getProfile, generateSessionBrief, getSakuraStatus, getPipeline, savePipeline, getMissions, saveMissions, getPriorities, savePriorities } from "./api.js";
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Cell } from "recharts";
 
 const C = {
@@ -86,12 +86,19 @@ function Dashboard({realIdeas=[], lastUpdated=null, profileData={followers:0,pos
   ];
   const [ideas, setIdeas] = useState(defaultIdeas);
   useEffect(() => { if(realIdeas.length > 0) setIdeas(realIdeas); }, [realIdeas]);
-  const [priorities] = useState([
-    {label:"Launch viral masterclass course",priority:"HIGH",assignee:"MIKE",action:true},
-    {label:"Analyze top performing content",priority:"MED",assignee:"SAKURA",action:false},
-    {label:"Update email sequence",priority:"LOW",assignee:"SAKURA",action:false},
-    {label:"Set up ManyChat keyword flows",priority:"HIGH",assignee:"MIKE",action:true},
-  ]);
+  const [priorities, setPriorities] = useState([]);
+  const [newPriority, setNewPriority] = useState("");
+  useEffect(() => {
+    getPriorities().then(data => { if(Array.isArray(data)) setPriorities(data); }).catch(() => {});
+  }, []);
+  const updatePriorities = (updated) => { setPriorities(updated); savePriorities(updated).catch(()=>{}); };
+  const addPriority = () => {
+    if (!newPriority.trim()) return;
+    const updated = [...priorities, {id: Date.now(), label: newPriority.trim(), priority:"MED", assignee:"MIKE", action:false}];
+    updatePriorities(updated);
+    setNewPriority("");
+  };
+  const deletePriority = (id) => updatePriorities(priorities.filter(p => p.id !== id));
 
   const done = missions.filter(m=>m.done).length;
   const handleScript = (idea) => {
@@ -241,15 +248,20 @@ function Dashboard({realIdeas=[], lastUpdated=null, profileData={followers:0,pos
         <div style={{background:C.card,borderRadius:18,padding:"26px 28px",border:`1px solid ${C.border}`}}>
           <h2 style={{fontSize:20,fontWeight:800,color:"#fff",marginBottom:20}}>Monthly Priorities</h2>
           <div style={{display:"flex",flexDirection:"column",gap:10}}>
-            {priorities.map((p,i)=>(
-              <div key={i} style={{background:C.card2,borderRadius:12,padding:"16px",border:`1px solid ${C.border}`,display:"flex",alignItems:"center",justifyContent:"space-between",gap:12}}>
-                <div>
+            {priorities.map((p)=>(
+              <div key={p.id} style={{background:C.card2,borderRadius:12,padding:"16px",border:`1px solid ${C.border}`,display:"flex",alignItems:"center",justifyContent:"space-between",gap:12}}>
+                <div style={{flex:1}}>
                   <div style={{fontSize:14,fontWeight:600,color:"#fff",marginBottom:8}}>{p.label}</div>
                   <div style={{display:"flex",gap:6}}><Tag label={p.priority}/><Tag label={p.assignee}/></div>
                 </div>
                 {p.action&&<span style={{background:"#2A0A0A",color:"#F87171",fontSize:11,fontWeight:700,padding:"4px 10px",borderRadius:6,whiteSpace:"nowrap"}}>Action Required</span>}
+                <button onClick={()=>deletePriority(p.id)} style={{background:"transparent",border:"none",color:"#444",fontSize:16,cursor:"pointer",padding:"0 4px"}}>×</button>
               </div>
             ))}
+            <div style={{display:"flex",gap:8,marginTop:4}}>
+              <input value={newPriority} onChange={e=>setNewPriority(e.target.value)} onKeyDown={e=>e.key==="Enter"&&addPriority()} placeholder="Add a priority..." style={{flex:1,background:"transparent",border:`1px dashed ${C.border}`,borderRadius:8,padding:"9px 12px",color:"#fff",fontSize:13,outline:"none"}}/>
+              <button onClick={addPriority} style={{background:C.orange,border:"none",borderRadius:8,padding:"9px 16px",color:"#fff",fontSize:13,fontWeight:700,cursor:"pointer"}}>+</button>
+            </div>
           </div>
         </div>
       </div>
