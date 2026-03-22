@@ -294,7 +294,7 @@ function Intelligence() {
       <div style={{fontSize:14,color:C.muted,marginBottom:32}}>Last Updated: {lastUpdated || new Date().toLocaleDateString("en-US",{month:"long",day:"numeric",year:"numeric"})}</div>
       <div style={{display:"grid",gridTemplateColumns:"repeat(3,1fr)",gap:16,marginBottom:28}}>
         {[
-          {label:"Trending formats this week",val:(intelData?.stats?.trendingFormats||["Talking Head","Value"]).join(" + "),tags:(intelData?.stats?.trendingFormats||["Talking Head","Value"])},
+          {label:"Trending formats this week",val:Array.isArray(intelData?.stats?.trendingFormats) ? intelData.stats.trendingFormats.join(" + ") : "Talking Head + Value",tags:Array.isArray(intelData?.stats?.trendingFormats) ? intelData.stats.trendingFormats : ["Talking Head","Value"]},
           {label:"Highest virality score in niche",val:intelData?.stats?.topViralScore?.toString()||"98",sub:"@"+(intelData?.stats?.topViralAccount||"therealbrianmark")},
           {label:"Total reels tracked",val:intelData?.stats?.totalReels?.toString()||"194",sub:intelData?.stats?.totalAccounts+" accounts",green:true},
         ].map((s,i)=>(
