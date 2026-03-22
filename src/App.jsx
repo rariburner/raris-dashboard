@@ -59,13 +59,15 @@ function Dashboard({realIdeas=[], lastUpdated=null}) {
     {id:5,hook:"My daily routine exposed",format:"Talking Head",cta:"Free PDF",status:"recorded"},
     {id:6,hook:"3 tools I use every day",format:"Value",cta:"Tool Links",status:"posted"},
   ]);
-  const [ideas, setIdeas] = useState(realIdeas.length > 0 ? realIdeas : [
+  const defaultIdeas = [
     {hook:"AI creators are going viral. Real creators are going broke. Here's why.",format:"Talking Head"},
     {hook:"Hot take: brand deals are making creators broke and they don't even know it",format:"Value"},
     {hook:"Your audience doesn't need to be big. It needs to be YOURS.",format:"Talking Head"},
     {hook:"Everyone's teaching you how to go viral. Nobody's teaching you how to get paid.",format:"Value"},
     {hook:"I could've taken brand deals. Instead I built something I own. Here's the math.",format:"Talking Head"},
-  ]);
+  ];
+  const [ideas, setIdeas] = useState(defaultIdeas);
+  useEffect(() => { if(realIdeas.length > 0) setIdeas(realIdeas); }, [realIdeas]);
   const [priorities] = useState([
     {label:"Launch viral masterclass course",priority:"HIGH",assignee:"MIKE",action:true},
     {label:"Analyze top performing content",priority:"MED",assignee:"SAKURA",action:false},
