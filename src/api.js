@@ -30,8 +30,18 @@ export async function scrapeNow() {
   return res.json();
 }
 
-export async function generateScript(hook, format, cta) {
-  const res = await fetch(`${API_URL}/api/script`, { method: 'POST', headers: { 'Content-Type': 'application/json', 'ngrok-skip-browser-warning': 'true' }, body: JSON.stringify({ hook, format, cta }) });
+export async function generateScript(hook, format, cta, notes, existingScript) {
+  const res = await fetch(`${API_URL}/api/script`, { method: 'POST', headers: { 'Content-Type': 'application/json', 'ngrok-skip-browser-warning': 'true' }, body: JSON.stringify({ hook, format, cta, notes, existingScript }) });
+  return res.json();
+}
+
+export async function getScripts() {
+  const res = await fetch(`${API_URL}/api/scripts`, { headers: { 'ngrok-skip-browser-warning': 'true' } });
+  return res.json();
+}
+
+export async function deleteScript(id) {
+  const res = await fetch(`${API_URL}/api/scripts/${id}`, { method: 'DELETE', headers: { 'ngrok-skip-browser-warning': 'true' } });
   return res.json();
 }
 

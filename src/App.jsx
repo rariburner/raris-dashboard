@@ -1,4 +1,5 @@
 import IdeasBank from "./IdeasBank.jsx";
+import Scripts from "./Scripts.jsx";
 import Board from "./Board.jsx";
 import { useState, useEffect } from "react";
 import { getIdeas, getNotifications, getStatus, pauseScraping, resumeScraping, scrapeNow, analyzeNow, generateScript } from "./api.js";
@@ -742,13 +743,13 @@ export default function RarisDashboard() {
     {id:"revenue",label:"Revenue",icon:"$"},
     {id:"goals",label:"Goals",icon:"◎"},
     {id:"sakuraos",label:"SakuraOS",icon:"✦"},
-    {id:"ideasbank",label:"Ideas Bank",icon:"◈"},{id:"board",label:"Board",icon:"▦"},
+    {id:"ideasbank",label:"Ideas Bank",icon:"◈"},{id:"scripts",label:"Scripts",icon:"✍"},{id:"board",label:"Board",icon:"▦"},
     {id:"settings",label:"Settings",icon:"⚙"},
   ];
   const pages = {
     dashboard:<Dashboard realIdeas={realIdeas} lastUpdated={ideasLastUpdated}/>,intelligence:<Intelligence/>,
     revenue:<Revenue/>,goals:<Goals/>,
-    sakuraos:<SakuraOS/>,ideasbank:<IdeasBank/>,board:<Board/>,settings:<Settings scrapePaused={scrapePaused} setScrapePaused={setScrapePaused}/>
+    sakuraos:<SakuraOS/>,ideasbank:<IdeasBank/>,scripts:<Scripts/>,board:<Board/>,settings:<Settings scrapePaused={scrapePaused} setScrapePaused={setScrapePaused}/>
   };
   return (
     <div style={{display:"flex",height:"100vh",background:C.bg,fontFamily:"system-ui,-apple-system,sans-serif",overflow:"hidden"}}>
