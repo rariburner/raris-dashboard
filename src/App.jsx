@@ -577,13 +577,12 @@ function SakuraOS() {
               : "DONE"
       })).filter(m => !m.task.includes("warnings") && !m.task.includes("urllib") && m.task.trim().length > 5)
     : defaultMissions;
-  const skills = [
-    {name:"Apify",desc:"Web scraping & automation",last:"2 min ago",active:true},
-    {name:"Whisper",desc:"Audio transcription",last:"1 hour ago",active:true},
-    {name:"Video Frames",desc:"Extract video thumbnails",last:"3 hours ago",active:false},
-    {name:"Summarize",desc:"Content summarization",last:"30 min ago",active:true},
-    {name:"Analytics",desc:"Data analysis & insights",last:"5 min ago",active:true},
-    {name:"Vision",desc:"Image analysis",last:"2 days ago",active:false},
+  const skills = sakuraData?.skills || [
+    {name:"Apify",desc:"Web scraping & automation",active:true},
+    {name:"Whisper",desc:"Audio transcription",active:true},
+    {name:"Claude AI",desc:"Analysis and idea generation",active:true},
+    {name:"Vision",desc:"Image and video analysis",active:false},
+    {name:"Analytics",desc:"Data analysis and insights",active:true},
   ];
   const briefing = [
     "✓ Analyzed 20 competitor videos overnight. Identified 3 emerging hook patterns with 90%+ virality scores.",
