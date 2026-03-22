@@ -637,6 +637,26 @@ function Settings() {
       </div>
       <div style={{background:C.card,borderRadius:18,padding:"26px 28px",marginBottom:28,border:`1px solid ${C.border}`}}>
         <h2 style={{fontSize:20,fontWeight:800,color:"#fff",marginBottom:20}}>🤖 Sakura Automation</h2>
+        <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",padding:"16px 0",borderBottom:`1px solid ${C.border}`}}>
+          <div>
+            <div style={{fontSize:14,fontWeight:600,color:"#fff",marginBottom:3}}>Daily Scraping</div>
+            <div style={{fontSize:13,color:C.muted}}>{scrapePaused?"Paused — no credits being used":"Active — scraping 18 accounts at 6am PT"}</div>
+          </div>
+          <div onClick={()=>setScrapePaused(!scrapePaused)} style={{display:"flex",alignItems:"center",gap:10,cursor:"pointer",background:scrapePaused?"rgba(239,68,68,0.1)":"rgba(0,208,132,0.1)",border:"1px solid "+(scrapePaused?"#EF4444":"#00D084"),borderRadius:10,padding:"8px 16px"}}>
+            <div style={{width:8,height:8,borderRadius:"50%",background:scrapePaused?"#EF4444":"#00D084"}}/>
+            <span style={{fontSize:13,fontWeight:700,color:scrapePaused?"#EF4444":"#00D084"}}>{scrapePaused?"Paused":"Active"}</span>
+          </div>
+        </div>
+        <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",padding:"16px 0"}}>
+          <div>
+            <div style={{fontSize:14,fontWeight:600,color:"#fff",marginBottom:3}}>Idea Generation</div>
+            <div style={{fontSize:13,color:C.muted}}>Sakura generates 10 ideas daily after scraping</div>
+          </div>
+          <div style={{display:"flex",alignItems:"center",gap:10,background:"rgba(0,208,132,0.1)",border:"1px solid #00D084",borderRadius:10,padding:"8px 16px"}}>
+            <div style={{width:8,height:8,borderRadius:"50%",background:"#00D084"}}/>
+            <span style={{fontSize:13,fontWeight:700,color:"#00D084"}}>Active</span>
+          </div>
+        </div>
         {[
           {label:"Export Data",desc:"Download all your dashboard data"},
           {label:"Clear Cache",desc:"Reset local storage and preferences"},
