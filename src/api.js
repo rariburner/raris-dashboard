@@ -1,4 +1,4 @@
-const API_URL = 'https://incogitable-orville-superwise.ngrok-free.app';
+const API_URL = 'https://incogitable-orville-superwise.ngrok-free.dev';
 
 export async function getIdeas() {
   const res = await fetch(`${API_URL}/api/ideas`, { headers: { 'ngrok-skip-browser-warning': 'true' } });
