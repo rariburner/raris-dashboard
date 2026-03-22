@@ -600,7 +600,7 @@ function SakuraOS() {
   );
 }
 
-function Settings() {
+function Settings({scrapePaused, setScrapePaused}) {
   const [notifs,setNotifs] = useState({ideas:true,sales:true,sakura:false});
   const [theme,setTheme] = useState("Dark");
 
@@ -702,7 +702,7 @@ export default function RarisDashboard() {
   const pages = {
     dashboard:<Dashboard/>,intelligence:<Intelligence/>,
     revenue:<Revenue/>,goals:<Goals/>,
-    sakuraos:<SakuraOS/>,ideasbank:<IdeasBank/>,board:<Board/>,settings:<Settings/>
+    sakuraos:<SakuraOS/>,ideasbank:<IdeasBank/>,board:<Board/>,settings:<Settings scrapePaused={scrapePaused} setScrapePaused={setScrapePaused}/>
   };
   return (
     <div style={{display:"flex",height:"100vh",background:C.bg,fontFamily:"system-ui,-apple-system,sans-serif",overflow:"hidden"}}>
