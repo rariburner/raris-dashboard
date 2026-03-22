@@ -59,7 +59,7 @@ function Dashboard({realIdeas=[], lastUpdated=null}) {
     {id:5,hook:"My daily routine exposed",format:"Talking Head",cta:"Free PDF",status:"recorded"},
     {id:6,hook:"3 tools I use every day",format:"Value",cta:"Tool Links",status:"posted"},
   ]);
-  const [ideas] = useState([
+  const [ideas, setIdeas] = useState(realIdeas.length > 0 ? realIdeas : [
     {hook:"AI creators are going viral. Real creators are going broke. Here's why.",format:"Talking Head"},
     {hook:"Hot take: brand deals are making creators broke and they don't even know it",format:"Value"},
     {hook:"Your audience doesn't need to be big. It needs to be YOURS.",format:"Talking Head"},
@@ -129,8 +129,8 @@ function Dashboard({realIdeas=[], lastUpdated=null}) {
             ))}
           </div>
           <div style={{display:"flex",gap:10}}>
-            <button style={{flex:1,background:C.orange,border:"none",color:"#fff",borderRadius:10,padding:"13px",fontSize:14,fontWeight:700,cursor:"pointer"}}>Generate 20 Ideas</button>
-            <button style={{background:C.card2,border:`1px solid ${C.border}`,color:"#fff",borderRadius:10,padding:"13px 18px",fontSize:14,cursor:"pointer"}}>↻ Refresh</button>
+            <button onClick={()=>analyzeNow().then(()=>setTimeout(()=>getIdeas().then(d=>{if(d.ideas&&d.ideas.length>0)setIdeas(d.ideas);}),5000))} style={{flex:1,background:C.orange,border:"none",color:"#fff",borderRadius:10,padding:"13px",fontSize:14,fontWeight:700,cursor:"pointer"}}>Generate 20 Ideas</button>
+            <button onClick={()=>getIdeas().then(d=>{if(d.ideas&&d.ideas.length>0)setIdeas(d.ideas);})} style={{background:C.card2,border:`1px solid ${C.border}`,color:"#fff",borderRadius:10,padding:"13px 18px",fontSize:14,cursor:"pointer"}}>↻ Refresh</button>
           </div>
         </div>
         <div style={{background:C.card,borderRadius:18,padding:"26px 28px",border:`1px solid ${C.border}`}}>
