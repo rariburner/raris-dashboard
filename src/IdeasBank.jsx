@@ -125,7 +125,7 @@ export default function IdeasBank() {
                     <span style={{ background: getFormatColor(idea.format) + "22", color: getFormatColor(idea.format), fontSize: 10, fontWeight: 700, padding: "2px 8px", borderRadius: 5 }}>{idea.format.split(" — ")[0]}</span>
                     <span style={{ fontSize: 11, color: "#888888" }}>@{idea.account}</span>
                     <span style={{ fontSize: 11, color: "#888888" }}>·</span>
-                    <span style={{ fontSize: 11, color: "#888888" }}>{(idea.plays / 1000000).toFixed(1)}M plays</span>
+                    <span style={{ fontSize: 11, color: "#888888" }}>{idea.plays ? (idea.plays / 1000000).toFixed(1) + "M plays" : "—"}</span>
                     <span style={{ fontSize: 11, color: "#888888" }}>·</span>
                     <span style={{ fontSize: 11, color: "#888888" }}>{idea.date}</span>
                   </div>
