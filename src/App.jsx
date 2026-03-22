@@ -603,6 +603,8 @@ function SakuraOS() {
 function Settings({scrapePaused, setScrapePaused}) {
   const [notifs,setNotifs] = useState({ideas:true,sales:true,sakura:false});
   const [theme,setTheme] = useState("Dark");
+  const [saved, setSaved] = useState(false);
+  const handleSave = () => { setSaved(true); setTimeout(() => setSaved(false), 2000); };
 
   return (
     <div style={{padding:"36px 40px",overflowY:"auto",height:"100%"}}>
