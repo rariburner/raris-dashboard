@@ -662,7 +662,7 @@ export default function RarisDashboard() {
     {id:"revenue",label:"Revenue",icon:"$"},
     {id:"goals",label:"Goals",icon:"◎"},
     {id:"sakuraos",label:"SakuraOS",icon:"✦"},
-    {id:"ideasbank",label:"Ideas Bank",icon:"💡"},{id:"board",label:"Board",icon:"▦"},
+    {id:"ideasbank",label:"Ideas Bank",icon:"◈"},{id:"board",label:"Board",icon:"▦"},
     {id:"settings",label:"Settings",icon:"⚙"},
   ];
   const pages = {
