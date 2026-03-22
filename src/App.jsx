@@ -562,16 +562,21 @@ function SakuraOS() {
   useEffect(() => {
     getSakuraStatus().then(d => setSakuraData(d)).catch(() => {});
   }, []);
-  const missions = [
-    {time:"06:00 AM",task:"Scraped 10 competitor accounts via Apify",status:"DONE"},
-    {time:"06:30 AM",task:"Transcribed top 3 reels per account with Whisper",status:"DONE"},
-    {time:"07:00 AM",task:"Analyzed 30 reels — type, niche fit, virality score",status:"DONE"},
-    {time:"07:30 AM",task:"Generated 10 content ideas in Mike's voice",status:"DONE"},
-    {time:"10:30 AM",task:"Scraped top 100 videos in niche",status:"DONE"},
-    {time:"11:00 AM",task:"Monitoring trending topics in creator niche",status:"RUNNING"},
-    {time:"06:00 PM",task:"Generate evening analytics summary",status:"QUEUED"},
-    {time:"08:00 PM",task:"Prepare tomorrow's content suggestions",status:"QUEUED"},
+  const defaultMissions = [
+    {time:"06:00 AM",task:"Scraped competitor accounts via Apify",status:"DONE"},
+    {time:"06:30 AM",task:"Transcribed reels with Whisper",status:"DONE"},
+    {time:"07:00 AM",task:"Analyzed reels with Claude AI",status:"DONE"},
+    {time:"07:30 AM",task:"Generated content ideas in Mike's voice",status:"DONE"},
   ];
+  const missions = sakuraData?.lastLog?.length > 0
+    ? sakuraData.lastLog.map((line, i) => ({
+        time: "",
+        task: line.substring(0, 80),
+        status: line.includes("Done") || line.includes("done") || line.includes("saved") ? "DONE"
+              : line.includes("warn") || line.includes("error") ? "RUNNING"
+              : "DONE"
+      })).filter(m => !m.task.includes("warnings") && !m.task.includes("urllib") && m.task.trim().length > 5)
+    : defaultMissions;
   const skills = [
     {name:"Apify",desc:"Web scraping & automation",last:"2 min ago",active:true},
     {name:"Whisper",desc:"Audio transcription",last:"1 hour ago",active:true},
