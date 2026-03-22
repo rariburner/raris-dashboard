@@ -271,9 +271,8 @@ function Intelligence() {
   const leaderboard = intelData?.leaderboard?.map((r,i) => ({
     rank: i+1,
     account: "@"+r.account,
-    hook: r.url || "",
     plays: r.topPlays >= 1000000 ? (r.topPlays/1000000).toFixed(1)+"M" : (r.topPlays/1000).toFixed(0)+"K",
-    followers: "—",
+    engagement: r.engagementPct ? r.engagementPct+"%" : "—",
     score: r.score,
     tier: r.tier || "Established",
     format: "Talking Head",
@@ -353,7 +352,7 @@ function Intelligence() {
         <table style={{width:"100%",borderCollapse:"collapse"}}>
           <thead>
             <tr style={{borderBottom:`1px solid ${C.border}`}}>
-              {["Rank","Account","Hook","Plays","Followers","Virality Score","Format"].map(h=>(
+              {["Rank","Account","Link","Plays","Engagement","Virality Score","Tier"].map(h=>(
                 <th key={h} style={{fontSize:12,color:C.muted,fontWeight:600,padding:"0 12px 12px",textAlign:"left"}}>{h}</th>
               ))}
             </tr>
@@ -367,9 +366,11 @@ function Intelligence() {
                 <td style={{padding:"13px 12px",fontSize:14,color:r.isMe?C.orange:"#fff",fontWeight:r.isMe?700:400}}>
                   {r.account}{r.isMe&&<span style={{fontSize:11,color:C.muted,marginLeft:6}}>(You)</span>}
                 </td>
-                <td style={{padding:"13px 12px",fontSize:13,color:C.muted,maxWidth:180}}>{r.hook}</td>
+                <td style={{padding:"13px 12px"}}>
+                  {r.url ? <a href={r.url} target="_blank" rel="noopener noreferrer" style={{background:"rgba(255,107,0,0.15)",border:"1px solid rgba(255,107,0,0.3)",borderRadius:8,padding:"5px 12px",color:C.orange,fontSize:11,fontWeight:700,textDecoration:"none"}}>Watch</a> : <span style={{color:C.muted,fontSize:12}}>—</span>}
+                </td>
                 <td style={{padding:"13px 12px",fontSize:14,color:"#fff",fontWeight:600}}>{r.plays}</td>
-                <td style={{padding:"13px 12px",fontSize:14,color:C.muted}}>{r.followers}</td>
+                <td style={{padding:"13px 12px",fontSize:13,color:C.muted}}>{r.engagement || "—"}</td>
                 <td style={{padding:"13px 12px"}}>
                   <div style={{display:"flex",alignItems:"center",gap:10}}>
                     <div style={{width:80,height:4,background:"#222",borderRadius:99}}>
@@ -378,7 +379,9 @@ function Intelligence() {
                     <span style={{fontSize:14,fontWeight:800,color:sc(r.score)}}>{r.score}</span>
                   </div>
                 </td>
-                <td style={{padding:"13px 12px"}}><Tag label={r.format}/></td>
+                <td style={{padding:"13px 12px"}}>
+                  <span style={{background:r.tier==="Outlier"?"rgba(255,107,0,0.15)":r.tier==="Viral"?"rgba(0,208,132,0.15)":"rgba(255,255,255,0.06)",color:r.tier==="Outlier"?C.orange:r.tier==="Viral"?C.green:"#888",fontSize:10,fontWeight:700,padding:"3px 9px",borderRadius:5}}>{r.tier||"Established"}</span>
+                </td>
               </tr>
             ))}
           </tbody>
