@@ -491,7 +491,7 @@ function Goals({profileData={followers:0,posts:0,lastUpdated:null}}) {
     {label:"Followers",icon:"📈",current:profileData.followers||0,target:250000,unit:"",deadline:"Dec 2026",color:C.orange,bg:"#FF6B0022"},
     {label:"Monthly Revenue",icon:"💰",current:0,target:25000,unit:"$",deadline:"Aug 2026",color:C.green,bg:"#00D08422"},
     {label:"Course Sales",icon:"🛒",current:0,target:50,unit:"",deadline:"Jun 2026",color:C.purple,bg:"#7C3AED22"},
-    {label:"Posts This Month",icon:"📄",current:profileData.posts||0,target:120,unit:"",deadline:"Mar 31, 2026",color:C.blue,bg:"#3B82F622"},
+    {label:"Posts This Month",icon:"📄",current:profileData.postsThisMonth||0,target:120,unit:"",deadline:"Mar 31, 2026",color:C.blue,bg:"#3B82F622"},
   ];
   return (
     <div style={{padding:"36px 40px",overflowY:"auto",height:"100%"}}>
