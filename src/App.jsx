@@ -2,7 +2,7 @@ import IdeasBank from "./IdeasBank.jsx";
 import Scripts from "./Scripts.jsx";
 import Board from "./Board.jsx";
 import { useState, useEffect } from "react";
-import { getIdeas, getNotifications, getStatus, pauseScraping, resumeScraping, scrapeNow, analyzeNow, generateScript, getIntelligence, getProfile, generateSessionBrief } from "./api.js";
+import { getIdeas, getNotifications, getStatus, pauseScraping, resumeScraping, scrapeNow, analyzeNow, generateScript, getIntelligence, getProfile, generateSessionBrief, getSakuraStatus } from "./api.js";
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Cell } from "recharts";
 
 const C = {
@@ -556,7 +556,12 @@ function Goals({profileData={followers:0,posts:0,lastUpdated:null}}) {
 function SakuraOS() {
   const [brief, setBrief] = useState("");
   const [briefLoading, setBriefLoading] = useState(false);
+  const [sakuraData, setSakuraData] = useState(null);
   const handleBrief = () => { setBriefLoading(true); generateSessionBrief().then(d => { setBrief(d.brief || "Failed to generate"); setBriefLoading(false); }).catch(() => { setBrief("Error — is API running?"); setBriefLoading(false); }); };
+
+  useEffect(() => {
+    getSakuraStatus().then(d => setSakuraData(d)).catch(() => {});
+  }, []);
   const missions = [
     {time:"06:00 AM",task:"Scraped 10 competitor accounts via Apify",status:"DONE"},
     {time:"06:30 AM",task:"Transcribed top 3 reels per account with Whisper",status:"DONE"},
@@ -598,9 +603,9 @@ function SakuraOS() {
       <div style={{display:"grid",gridTemplateColumns:"repeat(4,1fr)",gap:14,marginBottom:28}}>
         {[
           {label:"Model",val:"Claude Opus 4.6",sub:"via Vercel"},
-          {label:"Status",val:"Online",sub:"All systems go",green:true},
-          {label:"Last Active",val:"2 min ago",sub:"Analyzing content"},
-          {label:"Tasks Today",val:"12",sub:"Completed",orange:true},
+          {label:"Status",val:sakuraData?.status||"Online",sub:sakuraData?.paused?"Scraping paused":"All systems go",green:!sakuraData?.paused},
+          {label:"Last Active",val:sakuraData?.lastActive||"—",sub:"Last cron run"},
+          {label:"Tasks Today",val:sakuraData?.tasksToday?.toString()||"—",sub:"Completed",orange:true},
         ].map((s,i)=>(
           <div key={i} style={{background:C.card,borderRadius:14,padding:"20px",border:`1px solid ${C.border}`}}>
             <div style={{fontSize:12,color:C.muted,marginBottom:6}}>{s.label}</div>
