@@ -666,9 +666,9 @@ function SakuraOS() {
       </div>
       <div style={{display:"grid",gridTemplateColumns:"repeat(3,1fr)",gap:16}}>
         {[
-          {label:"Ideas Generated",val:"0",sub:"Total this month"},
-          {label:"Videos Analyzed",val:"30",sub:"Competitor research"},
-          {label:"Uptime",val:"99.8%",sub:"Last 30 days",green:true},
+          {label:"Ideas Generated",val:sakuraData?.ideasCount?.toString()||"—",sub:"Today's ideas"},
+          {label:"Videos Analyzed",val:sakuraData?.transcriptCount?.toString()||"—",sub:"Transcripts total"},
+          {label:"Accounts Tracked",val:sakuraData?.accountCount?.toString()||"—",sub:"Competitor accounts",green:true},
         ].map((s,i)=>(
           <div key={i} style={{background:C.card,borderRadius:14,padding:"20px 22px",border:`1px solid ${C.border}`}}>
             <div style={{fontSize:13,color:C.muted,marginBottom:8}}>{s.label}</div>
