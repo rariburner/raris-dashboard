@@ -1,4 +1,5 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { getIdeas } from "./api.js";
 
 const C = {
   bg: "#0D0D0D", card: "#161616", card2: "#1E1E1E",
@@ -37,6 +38,17 @@ function getFormatColor(format) {
 
 export default function IdeasBank() {
   const [ideas, setIdeas] = useState(sampleIdeas);
+  const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    setLoading(true);
+    getIdeas().then(d => {
+      if (d.ideas && d.ideas.length > 0) {
+        setIdeas(d.ideas.map((idea, i) => ({...idea, id: i+1, used: false})));
+      }
+      setLoading(false);
+    }).catch(() => setLoading(false));
+  }, []);
   const [filter, setFilter] = useState("All");
   const [sortBy, setSortBy] = useState("date");
   const [showUsed, setShowUsed] = useState(true);
