@@ -1,7 +1,7 @@
 import IdeasBank from "./IdeasBank.jsx";
 import Board from "./Board.jsx";
 import { useState, useEffect } from "react";
-import { getIdeas, getNotifications, getStatus, pauseScraping, resumeScraping, scrapeNow, analyzeNow } from "./api.js";
+import { getIdeas, getNotifications, getStatus, pauseScraping, resumeScraping, scrapeNow, analyzeNow, generateScript } from "./api.js";
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Cell } from "recharts";
 
 const C = {
@@ -45,6 +45,8 @@ const CustomTooltip = ({active,payload}) => {
 };
 
 function Dashboard({realIdeas=[], lastUpdated=null}) {
+  const [scriptModal, setScriptModal] = useState(null);
+  const [scriptLoading, setScriptLoading] = useState(false);
   const [missions, setMissions] = useState([
     {id:1,label:"Record 5 videos",done:false},{id:2,label:"Post 2 short-form videos",done:false},
     {id:3,label:"Review analytics",done:false},{id:4,label:"Engage with 10 comments",done:false},
@@ -76,12 +78,34 @@ function Dashboard({realIdeas=[], lastUpdated=null}) {
   ]);
 
   const done = missions.filter(m=>m.done).length;
+  const handleScript = (idea) => {
+    setScriptLoading(true);
+    setScriptModal({hook: idea.hook, script: 'Generating script...'});
+    generateScript(idea.hook, idea.format, idea.cta).then(d => {
+      setScriptModal({hook: idea.hook, script: d.script || 'Failed to generate script'});
+      setScriptLoading(false);
+    }).catch(() => { setScriptModal({hook: idea.hook, script: 'Error — is the API running?'}); setScriptLoading(false); });
+  };
   const statusC = {idea:C.orange,scripted:"#EAB308",recorded:C.blue,posted:C.green};
   const cols = ["idea","scripted","recorded","posted"];
   const colLabel = {idea:"IDEA",scripted:"SCRIPTED",recorded:"RECORDED",posted:"POSTED"};
 
   return (
     <div style={{padding:"36px 40px",overflowY:"auto",height:"100%"}}>
+      {scriptModal && (
+        <div style={{position:"fixed",inset:0,background:"rgba(0,0,0,0.8)",zIndex:1000,display:"flex",alignItems:"center",justifyContent:"center"}} onClick={()=>setScriptModal(null)}>
+          <div style={{background:"#1E1E1E",borderRadius:16,padding:32,width:560,maxWidth:"90vw",border:"1px solid rgba(255,255,255,0.1)"}} onClick={e=>e.stopPropagation()}>
+            <div style={{fontSize:12,color:"#888",marginBottom:8}}>HOOK</div>
+            <div style={{fontSize:14,fontWeight:700,color:"#fff",marginBottom:20,lineHeight:1.5}}>"{scriptModal.hook}"</div>
+            <div style={{fontSize:12,color:"#888",marginBottom:8}}>SCRIPT</div>
+            <div style={{fontSize:14,color:scriptLoading?"#555":"#fff",lineHeight:1.7,background:"#161616",borderRadius:10,padding:"16px",whiteSpace:"pre-wrap"}}>{scriptModal.script}</div>
+            <div style={{display:"flex",gap:10,marginTop:20,justifyContent:"flex-end"}}>
+              <button onClick={()=>{navigator.clipboard.writeText(scriptModal.script)}} style={{background:"#FF6B00",border:"none",borderRadius:8,padding:"9px 20px",color:"#fff",fontSize:13,fontWeight:700,cursor:"pointer"}}>Copy Script</button>
+              <button onClick={()=>setScriptModal(null)} style={{background:"#161616",border:"1px solid rgba(255,255,255,0.07)",borderRadius:8,padding:"9px 20px",color:"#888",fontSize:13,cursor:"pointer"}}>Close</button>
+            </div>
+          </div>
+        </div>
+      )}
       <h1 style={{fontSize:48,fontWeight:900,color:"#fff",marginBottom:32,letterSpacing:-1,lineHeight:1}}>Good morning, Mike.</h1>
       <div style={{display:"grid",gridTemplateColumns:"repeat(4,1fr)",gap:16,marginBottom:36}}>
         {[
@@ -126,7 +150,7 @@ function Dashboard({realIdeas=[], lastUpdated=null}) {
                   <div style={{fontSize:13,color:"#fff",marginBottom:6,lineHeight:1.4}}>{idea.hook}</div>
                   <Tag label={idea.format}/>
                 </div>
-                <button style={{background:"transparent",border:"none",color:C.orange,fontSize:13,fontWeight:700,cursor:"pointer",whiteSpace:"nowrap"}}>Script →</button>
+                <button onClick={()=>handleScript(idea)} style={{background:"transparent",border:"none",color:C.orange,fontSize:13,fontWeight:700,cursor:"pointer",whiteSpace:"nowrap"}}>Script →</button>
               </div>
             ))}
           </div>

@@ -30,6 +30,11 @@ export async function scrapeNow() {
   return res.json();
 }
 
+export async function generateScript(hook, format, cta) {
+  const res = await fetch(`${API_URL}/api/script`, { method: 'POST', headers: { 'Content-Type': 'application/json', 'ngrok-skip-browser-warning': 'true' }, body: JSON.stringify({ hook, format, cta }) });
+  return res.json();
+}
+
 export async function analyzeNow() {
   const res = await fetch(`${API_URL}/api/analyze-now`, { method: 'POST', headers: { 'ngrok-skip-browser-warning': 'true' } });
   return res.json();
