@@ -40,12 +40,15 @@ export default function IdeasBank() {
   const [ideas, setIdeas] = useState(sampleIdeas);
   const [loading, setLoading] = useState(false);
 
+  const [lastUpdated, setLastUpdated] = useState(null);
+
   useEffect(() => {
     setLoading(true);
     getIdeas().then(d => {
       if (d.ideas && d.ideas.length > 0) {
         setIdeas(d.ideas.map((idea, i) => ({...idea, id: i+1, used: false})));
       }
+      if (d.lastUpdated) setLastUpdated(d.lastUpdated);
       setLoading(false);
     }).catch(() => setLoading(false));
   }, []);
@@ -78,7 +81,7 @@ export default function IdeasBank() {
       <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", marginBottom: 24, flexWrap: "wrap", gap: 16 }}>
         <div>
           <h1 style={{ fontSize: 32, fontWeight: 900, color: "#fff", margin: 0, letterSpacing: -0.5 }}>Ideas Bank</h1>
-          <div style={{ fontSize: 13, color: "#888888", marginTop: 4 }}>{unusedCount} unused ideas · {ideas.length} total</div>
+          <div style={{ fontSize: 13, color: "#888888", marginTop: 4 }}>{unusedCount} unused ideas · {ideas.length} total{lastUpdated && <span style={{marginLeft:12, color:"#555"}}>· Last Updated: {lastUpdated}</span>}</div>
         </div>
         <div style={{ display: "flex", gap: 10, alignItems: "center", flexWrap: "wrap" }}>
           <select value={sortBy} onChange={e => setSortBy(e.target.value)} style={{ background: "#1E1E1E", border: "1px solid rgba(255,255,255,0.07)", borderRadius: 8, padding: "7px 12px", color: "#fff", fontSize: 12, outline: "none" }}>

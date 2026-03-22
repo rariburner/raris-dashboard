@@ -44,7 +44,7 @@ const CustomTooltip = ({active,payload}) => {
   );
 };
 
-function Dashboard() {
+function Dashboard({realIdeas=[], lastUpdated=null}) {
   const [missions, setMissions] = useState([
     {id:1,label:"Record 5 videos",done:false},{id:2,label:"Post 2 short-form videos",done:false},
     {id:3,label:"Review analytics",done:false},{id:4,label:"Engage with 10 comments",done:false},
@@ -115,7 +115,7 @@ function Dashboard() {
       </div>
       <div style={{display:"grid",gridTemplateColumns:"3fr 2fr",gap:20,marginBottom:28}}>
         <div style={{background:C.card,borderRadius:18,padding:"26px 28px",border:`1px solid ${C.border}`}}>
-          <h2 style={{fontSize:20,fontWeight:800,color:"#fff",marginBottom:20}}>Today's Ideas</h2>
+          <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",marginBottom:20}}><h2 style={{fontSize:20,fontWeight:800,color:"#fff",margin:0}}>Today's Ideas</h2>{lastUpdated && <span style={{fontSize:11,color:"#555"}}>Last Updated: {lastUpdated}</span>}</div>
           <div style={{display:"flex",flexDirection:"column",gap:10,marginBottom:20}}>
             {ideas.map((idea,i)=>(
               <div key={i} style={{background:C.card2,borderRadius:12,padding:"13px 16px",display:"flex",alignItems:"center",gap:12,border:`1px solid ${C.border}`}}>
@@ -682,6 +682,7 @@ export default function RarisDashboard() {
   const [active,setActive] = useState("dashboard");
   const [realIdeas, setRealIdeas] = useState([]);
   const [apiOnline, setApiOnline] = useState(false);
+  const [ideasLastUpdated, setIdeasLastUpdated] = useState(null);
 
   useEffect(() => {
     getStatus().then(s => {
@@ -690,6 +691,7 @@ export default function RarisDashboard() {
     }).catch(() => setApiOnline(false));
     getIdeas().then(d => {
       if (d.ideas && d.ideas.length > 0) setRealIdeas(d.ideas);
+      if (d.lastUpdated) setIdeasLastUpdated(d.lastUpdated);
     }).catch(() => {});
     getNotifications().then(n => {
       if (n && n.length > 0) setNotifications(n.map((notif, i) => ({...notif, id: i+1, read: notif.read || false})));
@@ -718,7 +720,7 @@ export default function RarisDashboard() {
     {id:"settings",label:"Settings",icon:"⚙"},
   ];
   const pages = {
-    dashboard:<Dashboard/>,intelligence:<Intelligence/>,
+    dashboard:<Dashboard realIdeas={realIdeas} lastUpdated={ideasLastUpdated}/>,intelligence:<Intelligence/>,
     revenue:<Revenue/>,goals:<Goals/>,
     sakuraos:<SakuraOS/>,ideasbank:<IdeasBank/>,board:<Board/>,settings:<Settings scrapePaused={scrapePaused} setScrapePaused={setScrapePaused}/>
   };
