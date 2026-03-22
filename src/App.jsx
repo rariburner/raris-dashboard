@@ -2,7 +2,7 @@ import IdeasBank from "./IdeasBank.jsx";
 import Scripts from "./Scripts.jsx";
 import Board from "./Board.jsx";
 import { useState, useEffect } from "react";
-import { getIdeas, getNotifications, getStatus, pauseScraping, resumeScraping, scrapeNow, analyzeNow, generateScript, getIntelligence, getProfile, generateSessionBrief, getSakuraStatus, getPipeline, savePipeline } from "./api.js";
+import { getIdeas, getNotifications, getStatus, pauseScraping, resumeScraping, scrapeNow, analyzeNow, generateScript, getIntelligence, getProfile, generateSessionBrief, getSakuraStatus, getPipeline, savePipeline, getMissions, saveMissions } from "./api.js";
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Cell } from "recharts";
 
 const C = {
@@ -48,12 +48,19 @@ const CustomTooltip = ({active,payload}) => {
 function Dashboard({realIdeas=[], lastUpdated=null, profileData={followers:0,posts:0,postsThisMonth:0}}) {
   const [scriptModal, setScriptModal] = useState(null);
   const [scriptLoading, setScriptLoading] = useState(false);
-  const [missions, setMissions] = useState([
-    {id:1,label:"Record 5 videos",done:false},{id:2,label:"Post 2 short-form videos",done:false},
-    {id:3,label:"Review analytics",done:false},{id:4,label:"Engage with 10 comments",done:false},
-    {id:5,label:"Script tomorrow's content",done:false},{id:6,label:"Update course module",done:false},
-    {id:7,label:"Check ManyChat leads",done:false},
-  ]);
+  const [missions, setMissions] = useState([]);
+  const [newMission, setNewMission] = useState("");
+  useEffect(() => {
+    getMissions().then(data => { if(Array.isArray(data)) setMissions(data); }).catch(() => {});
+  }, []);
+  const updateMissions = (updated) => { setMissions(updated); saveMissions(updated).catch(()=>{}); };
+  const addMission = () => {
+    if (!newMission.trim()) return;
+    const updated = [...missions, {id: Date.now(), label: newMission.trim(), done: false}];
+    updateMissions(updated);
+    setNewMission("");
+  };
+  const deleteMission = (id) => updateMissions(missions.filter(m => m.id !== id));
   const [pipeline, setPipeline] = useState([]);
   const [pipelineLoaded, setPipelineLoaded] = useState(false);
   useEffect(() => {
@@ -212,20 +219,24 @@ function Dashboard({realIdeas=[], lastUpdated=null, profileData={followers:0,pos
           <h2 style={{fontSize:20,fontWeight:800,color:C.orange,marginBottom:18}}>Mike's Daily Missions</h2>
           <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:8}}>
             <span style={{fontSize:13,color:C.muted}}>Progress</span>
-            <span style={{fontSize:13,color:C.orange,fontWeight:700}}>{done}/7 complete</span>
+            <span style={{fontSize:13,color:C.orange,fontWeight:700}}>{done}/{missions.length} complete</span>
           </div>
           <div style={{background:"#222",borderRadius:99,height:4,marginBottom:20}}>
-            <div style={{background:C.orange,height:4,borderRadius:99,width:`${(done/7)*100}%`,transition:"width 0.3s"}}/>
+            <div style={{background:C.orange,height:4,borderRadius:99,width:`${missions.length>0?(done/missions.length)*100:0}%`,transition:"width 0.3s"}}/>
           </div>
           {missions.map(m=>(
-            <div key={m.id} onClick={()=>setMissions(missions.map(x=>x.id===m.id?{...x,done:!x.done}:x))}
-              style={{display:"flex",alignItems:"center",gap:12,padding:"11px 0",cursor:"pointer",borderBottom:`1px solid ${C.border}`}}>
-              <div style={{width:20,height:20,borderRadius:5,border:`2px solid ${m.done?C.orange:"#444"}`,background:m.done?C.orange:"transparent",display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0}}>
+            <div key={m.id} style={{display:"flex",alignItems:"center",gap:12,padding:"11px 0",borderBottom:`1px solid ${C.border}`}}>
+              <div onClick={()=>updateMissions(missions.map(x=>x.id===m.id?{...x,done:!x.done}:x))} style={{width:20,height:20,borderRadius:5,border:`2px solid ${m.done?C.orange:"#444"}`,background:m.done?C.orange:"transparent",display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0,cursor:"pointer"}}>
                 {m.done&&<span style={{color:"#fff",fontSize:11,fontWeight:900}}>✓</span>}
               </div>
-              <span style={{fontSize:14,color:m.done?C.muted:"#fff",textDecoration:m.done?"line-through":"none"}}>{m.label}</span>
+              <span onClick={()=>updateMissions(missions.map(x=>x.id===m.id?{...x,done:!x.done}:x))} style={{fontSize:14,color:m.done?C.muted:"#fff",textDecoration:m.done?"line-through":"none",flex:1,cursor:"pointer"}}>{m.label}</span>
+              <button onClick={()=>deleteMission(m.id)} style={{background:"transparent",border:"none",color:"#444",fontSize:16,cursor:"pointer",padding:"0 4px",lineHeight:1}}>×</button>
             </div>
           ))}
+          <div style={{display:"flex",gap:8,marginTop:14}}>
+            <input value={newMission} onChange={e=>setNewMission(e.target.value)} onKeyDown={e=>e.key==="Enter"&&addMission()} placeholder="Add a mission..." style={{flex:1,background:"transparent",border:`1px dashed ${C.border}`,borderRadius:8,padding:"9px 12px",color:"#fff",fontSize:13,outline:"none"}}/>
+            <button onClick={addMission} style={{background:C.orange,border:"none",borderRadius:8,padding:"9px 16px",color:"#fff",fontSize:13,fontWeight:700,cursor:"pointer"}}>+</button>
+          </div>
         </div>
         <div style={{background:C.card,borderRadius:18,padding:"26px 28px",border:`1px solid ${C.border}`}}>
           <h2 style={{fontSize:20,fontWeight:800,color:"#fff",marginBottom:20}}>Monthly Priorities</h2>
