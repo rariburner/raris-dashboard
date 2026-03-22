@@ -2,7 +2,7 @@ import IdeasBank from "./IdeasBank.jsx";
 import Scripts from "./Scripts.jsx";
 import Board from "./Board.jsx";
 import { useState, useEffect } from "react";
-import { getIdeas, getNotifications, getStatus, pauseScraping, resumeScraping, scrapeNow, analyzeNow, generateScript, getIntelligence, getProfile } from "./api.js";
+import { getIdeas, getNotifications, getStatus, pauseScraping, resumeScraping, scrapeNow, analyzeNow, generateScript, getIntelligence, getProfile, generateSessionBrief } from "./api.js";
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Cell } from "recharts";
 
 const C = {
@@ -554,6 +554,9 @@ function Goals({profileData={followers:0,posts:0,lastUpdated:null}}) {
 }
 
 function SakuraOS() {
+  const [brief, setBrief] = useState("");
+  const [briefLoading, setBriefLoading] = useState(false);
+  const handleBrief = () => { setBriefLoading(true); generateSessionBrief().then(d => { setBrief(d.brief || "Failed to generate"); setBriefLoading(false); }).catch(() => { setBrief("Error — is API running?"); setBriefLoading(false); }); };
   const missions = [
     {time:"06:00 AM",task:"Scraped 10 competitor accounts via Apify",status:"DONE"},
     {time:"06:30 AM",task:"Transcribed top 3 reels per account with Whisper",status:"DONE"},
@@ -647,7 +650,7 @@ function SakuraOS() {
             <h2 style={{fontSize:20,fontWeight:800,color:C.purple}}>Sync with Claude</h2>
             <div style={{fontSize:13,color:"rgba(255,255,255,0.5)",marginTop:2}}>Last synced: 9:00 AM today</div>
           </div>
-          <button style={{background:"#fff",border:"none",color:C.purple,borderRadius:10,padding:"10px 20px",fontSize:13,fontWeight:800,cursor:"pointer"}}>Generate Session Briefing</button>
+          <button onClick={handleBrief} style={{background:"#fff",border:"none",color:C.purple,borderRadius:10,padding:"10px 20px",fontSize:13,fontWeight:800,cursor:briefLoading?"not-allowed":"pointer"}}>{briefLoading?"Generating...":"Generate Session Briefing"}</button>{brief && <div style={{marginTop:16,background:"rgba(0,0,0,0.3)",borderRadius:10,padding:"14px 16px",fontSize:13,color:"#fff",lineHeight:1.7,whiteSpace:"pre-wrap",textAlign:"left"}}>{brief}</div>}
         </div>
         <div style={{background:"rgba(255,255,255,0.06)",borderRadius:12,padding:"18px 20px"}}>
           <div style={{fontSize:13,fontWeight:700,color:"#fff",marginBottom:12}}>Morning Briefing — {new Date().toLocaleDateString("en-US",{month:"long",day:"numeric",year:"numeric"})}</div>

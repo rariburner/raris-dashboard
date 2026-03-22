@@ -45,6 +45,11 @@ export async function getIntelligence() {
   return res.json();
 }
 
+export async function generateSessionBrief() {
+  const res = await fetch(`${API_URL}/api/session-brief`, { method: "POST", headers: { "ngrok-skip-browser-warning": "true" } });
+  return res.json();
+}
+
 export async function getScripts() {
   const res = await fetch(`${API_URL}/api/scripts`, { headers: { 'ngrok-skip-browser-warning': 'true' } });
   return res.json();
