@@ -1,3 +1,4 @@
+import IdeasBank from "./IdeasBank.jsx";
 import Board from "./Board.jsx";
 import { useState } from "react";
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Cell } from "recharts";
@@ -661,13 +662,13 @@ export default function RarisDashboard() {
     {id:"revenue",label:"Revenue",icon:"$"},
     {id:"goals",label:"Goals",icon:"◎"},
     {id:"sakuraos",label:"SakuraOS",icon:"✦"},
-    {id:"board",label:"Board",icon:"▦"},
+    {id:"ideasbank",label:"Ideas Bank",icon:"💡"},{id:"board",label:"Board",icon:"▦"},
     {id:"settings",label:"Settings",icon:"⚙"},
   ];
   const pages = {
     dashboard:<Dashboard/>,intelligence:<Intelligence/>,
     revenue:<Revenue/>,goals:<Goals/>,
-    sakuraos:<SakuraOS/>,board:<Board/>,settings:<Settings/>
+    sakuraos:<SakuraOS/>,ideasbank:<IdeasBank/>,board:<Board/>,settings:<Settings/>
   };
   return (
     <div style={{display:"flex",height:"100vh",background:C.bg,fontFamily:"system-ui,-apple-system,sans-serif",overflow:"hidden"}}>
