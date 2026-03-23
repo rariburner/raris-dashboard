@@ -67,7 +67,7 @@ function AIContextMenu({ x, y, onAction, onClose }) {
   return (
     <>
       <div style={{ position: "fixed", inset: 0, zIndex: 9998 }} onClick={onClose} onContextMenu={e => { e.preventDefault(); onClose(); }} />
-      <div style={{ position: "fixed", left: Math.min(x, window.innerWidth - 280), top: Math.min(y, window.innerHeight - 420), background: "#1A1A1A", border: "1px solid rgba(255,255,255,0.12)", borderRadius: 14, padding: "10px", width: 270, zIndex: 9999, boxShadow: "0 24px 64px rgba(0,0,0,0.9)" }}>
+      <div onClick={e => e.stopPropagation()} onMouseDown={e => e.stopPropagation()} style={{ position: "fixed", left: Math.min(x, window.innerWidth - 280), top: Math.min(y, window.innerHeight - 420), background: "#1A1A1A", border: "1px solid rgba(255,255,255,0.12)", borderRadius: 14, padding: "10px", width: 270, zIndex: 9999, boxShadow: "0 24px 64px rgba(0,0,0,0.9)" }}>
         <div style={{ display: "flex", gap: 8, marginBottom: 8, padding: "2px" }}>
           <input value={customPrompt} onChange={e => setCustomPrompt(e.target.value)} onKeyDown={e => { if(e.key === "Enter" && customPrompt.trim()) { onAction("custom: " + customPrompt); onClose(); }}} placeholder="Ask Sakura what to do..." style={{ flex: 1, background: "#111", border: "1px solid rgba(255,255,255,0.08)", borderRadius: 8, padding: "8px 10px", color: "#fff", fontSize: 12, outline: "none", fontFamily: FONT }} autoFocus />
           <button onClick={() => { if(customPrompt.trim()) { onAction("custom: " + customPrompt); onClose(); }}} style={{ background: C.orange, border: "none", borderRadius: 8, padding: "8px 12px", color: "#fff", fontSize: 14, cursor: "pointer" }}>↑</button>
