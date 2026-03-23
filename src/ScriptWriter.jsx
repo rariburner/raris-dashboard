@@ -18,7 +18,7 @@ const HOOKS = [
   {name:"Pattern Interrupt",desc:"Start mid-sentence or unexpected. Breaks the scroll."},
 ];
 const CTAS = ["Comment VIRAL","Comment PIPELINE","Comment SYSTEM","Comment FREE","Comment BUYERS","No CTA","Custom"];
-const LENGTHS = [{label:"~30 sec",words:"130-150 words"},{label:"~45 sec",words:"175-200 words"},{label:"~60 sec",words:"225-250 words"}];
+const LENGTHS = [{label:"Standard (28-35 sec)",words:"170-210 words"},{label:"Extended (38-42 sec)",words:"225-250 words"}];
 
 export default function ScriptWriter({onSaveScript}){
   const [idea,setIdea]=useState("");
@@ -45,7 +45,7 @@ export default function ScriptWriter({onSaveScript}){
   const generate = async () => {
     if(!idea.trim()) return;
     setLoading(true); setResult(null); setSuggestions([]); setSaved(false); setFadeIn(false);
-    const prompt = "You are Sakura, content operator for Mike Rari (@realmikerari).\n\nCRITICAL RULES:\n- Write LIKE Mike. Do NOT force his personal stories unless they naturally serve this specific idea.\n- Do NOT force the $400K story, brand deals, or the 6-year struggle into every script.\n- Do NOT be a motivational speaker. Mike is nonchalant and convicted, not preachy.\n- He observes things. He points at something real and lets people sit with it.\n- MIX sentence rhythm — some short, some longer, some flowing. Repetitive short sentences sound like AI.\n- Only reference personal stories if they genuinely serve the idea. Otherwise skip them.\n\nRAW IDEA: "+idea+"\nFORMAT: "+format+"\nTONE: "+tones.join(", ")+"\nHOOK STYLE: "+hook+"\nCTA: "+activeCta+"\nLENGTH: "+length.words+"\n\nWrite ONLY the script. Hook paragraph, then Body paragraphs, then CTA — separated by blank lines. Then write ---SUGGESTIONS--- followed by 3 bullet suggestions starting with bullet character.";
+    const prompt = "You are Sakura, content operator for Mike Rari (@realmikerari).\n\nCRITICAL RULES:\n- Write LIKE Mike. Do NOT force his personal stories unless they naturally serve this specific idea.\n- Do NOT force the $400K story, brand deals, or the 6-year struggle into every script.\n- Do NOT be a motivational speaker. Mike is nonchalant and convicted, not preachy.\n- He observes things. He points at something real and lets people sit with it.\n- MIX sentence rhythm — some short, some longer, some flowing. Repetitive short sentences sound like AI.\n- Use simple common words. 7th grade reading level. If a simpler word exists, use it.\n- Only reference personal stories if they genuinely serve the idea. Otherwise skip them.\n\nRAW IDEA: "+idea+"\nFORMAT: "+format+"\nTONE: "+tones.join(", ")+"\nHOOK STYLE: "+hook+"\nCTA: "+activeCta+"\nLENGTH: "+length.words+"\n\nWrite ONLY the script. Hook paragraph, then Body paragraphs, then CTA — separated by blank lines. Then write ---SUGGESTIONS--- followed by 3 bullet suggestions starting with bullet character.";
     try {
       const res = await generateScript(idea,format,activeCta,prompt,idea);
       if(res.script){
