@@ -66,7 +66,7 @@ function AIContextMenu({ x, y, onAction, onClose }) {
   const [customPrompt, setCustomPrompt] = useState("");
   return (
     <>
-      <div style={{ position: "fixed", inset: 0, zIndex: 9998 }} onClick={onClose} />
+      <div style={{ position: "fixed", inset: 0, zIndex: 9998 }} onClick={onClose} onContextMenu={e => { e.preventDefault(); onClose(); }} />
       <div style={{ position: "fixed", left: Math.min(x, window.innerWidth - 280), top: Math.min(y, window.innerHeight - 420), background: "#1A1A1A", border: "1px solid rgba(255,255,255,0.12)", borderRadius: 14, padding: "10px", width: 270, zIndex: 9999, boxShadow: "0 24px 64px rgba(0,0,0,0.9)" }}>
         <div style={{ display: "flex", gap: 8, marginBottom: 8, padding: "2px" }}>
           <input value={customPrompt} onChange={e => setCustomPrompt(e.target.value)} onKeyDown={e => { if(e.key === "Enter" && customPrompt.trim()) { onAction("custom: " + customPrompt); onClose(); }}} placeholder="Ask Sakura what to do..." style={{ flex: 1, background: "#111", border: "1px solid rgba(255,255,255,0.08)", borderRadius: 8, padding: "8px 10px", color: "#fff", fontSize: 12, outline: "none", fontFamily: FONT }} autoFocus />
@@ -154,7 +154,7 @@ function ScriptEditor({ script, onClose, onSave, onDelete }) {
   );
 
   return (
-    <div style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.88)", zIndex: 1000, display: "flex", alignItems: "center", justifyContent: "center" }} onClick={onClose}>
+    <div style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.88)", zIndex: 1000, display: "flex", alignItems: "center", justifyContent: "center" }} onClick={onClose} onContextMenu={e => e.preventDefault()}>
       {contextMenu && <AIContextMenu x={contextMenu.x} y={contextMenu.y} onAction={handleAIAction} onClose={() => setContextMenu(null)} />}
       <div style={{ background: "#141414", borderRadius: 20, width: 780, maxWidth: "96vw", maxHeight: "92vh", overflow: "hidden", display: "flex", flexDirection: "column", border: "1px solid rgba(255,255,255,0.08)", boxShadow: "0 40px 100px rgba(0,0,0,0.9)" }} onClick={e => e.stopPropagation()}>
         <div style={{ padding: "22px 28px 18px", borderBottom: "1px solid rgba(255,255,255,0.06)", background: "#161616" }}>
