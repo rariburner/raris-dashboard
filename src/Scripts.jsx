@@ -91,14 +91,13 @@ function AIContextMenu({ x, y, onAction, onClose }) {
 function ScriptEditor({ script, onClose, onSave, onDelete }) {
   const [sections, setSections] = useState(() => {
     const text = script.script || "";
-    const lines = text.split("\n").filter(Boolean);
-    const hookEnd = Math.min(2, lines.length);
-    const ctaStart = Math.max(lines.length - 1, hookEnd);
-    return {
-      hook: lines.slice(0, hookEnd).join("\n"),
-      body: lines.slice(hookEnd, ctaStart).join("\n"),
-      cta: lines.slice(ctaStart).join("\n"),
-    };
+    const parts = text.split("\n\n").filter(Boolean);
+    if (parts.length >= 3) {
+      return { hook: parts[0], body: parts.slice(1, -1).join("\n\n"), cta: parts[parts.length - 1] };
+    } else if (parts.length === 2) {
+      return { hook: parts[0], body: "", cta: parts[1] };
+    }
+    return { hook: text, body: "", cta: "" };
   });
   const [status, setStatus] = useState(script.status || "Draft");
   const [notes, setNotes] = useState(script.notes || "");
