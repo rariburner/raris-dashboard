@@ -77,7 +77,7 @@ function ScriptCard({ script, onDelete, onUpdate }) {
 
           <div style={{ display: "flex", gap: 8, marginBottom: 16, flexWrap: "wrap" }}>
             {["Draft", "Ready", "Recorded", "Posted"].map(s => (
-              <button key={s} onClick={() => setStatus(s)} style={{ background: status === s ? STATUS_COLORS[s].bg : "transparent", border: `1px solid ${status === s ? STATUS_COLORS[s].c : C.border}`, borderRadius: 8, padding: "5px 12px", color: status === s ? STATUS_COLORS[s].c : C.muted, fontSize: 11, fontWeight: 700, cursor: "pointer" }}>
+              <button key={s} onClick={() => { setStatus(s); onUpdate(script.id, currentScript, s); }} style={{ background: status === s ? STATUS_COLORS[s].bg : "transparent", border: `1px solid ${status === s ? STATUS_COLORS[s].c : C.border}`, borderRadius: 8, padding: "5px 12px", color: status === s ? STATUS_COLORS[s].c : C.muted, fontSize: 11, fontWeight: 700, cursor: "pointer" }}>
                 {s}
               </button>
             ))}
@@ -120,8 +120,8 @@ export default function Scripts() {
     deleteScript(id).then(() => setScripts(prev => prev.filter(s => s.id !== id)));
   };
 
-  const handleUpdate = (id, newScript) => {
-    setScripts(prev => prev.map(s => s.id === id ? { ...s, script: newScript } : s));
+  const handleUpdate = (id, newScript, newStatus) => {
+    setScripts(prev => prev.map(s => s.id === id ? { ...s, script: newScript, ...(newStatus ? {status: newStatus} : {}) } : s));
   };
 
   const statuses = ["All", "Draft", "Ready", "Recorded", "Posted"];
