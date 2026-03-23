@@ -27,7 +27,7 @@ export default function ScriptWriter({onSaveScript}){
   const [hook,setHook]=useState(HOOKS[0].name);
   const [cta,setCta]=useState(CTAS[0]);
   const [customCta,setCustomCta]=useState("");
-  const [length,setLength]=useState(LENGTHS[2]);
+  const [length,setLength]=useState(LENGTHS[0]);
   const [loading,setLoading]=useState(false);
   const [result,setResult]=useState(null);
   const [suggestions,setSuggestions]=useState([]);
