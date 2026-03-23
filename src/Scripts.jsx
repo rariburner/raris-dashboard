@@ -156,7 +156,7 @@ function ScriptEditor({ script, onClose, onSave, onDelete }) {
   return (
     <div style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.88)", zIndex: 1000, display: "flex", alignItems: "center", justifyContent: "center" }} onClick={onClose} onContextMenu={e => e.preventDefault()}>
       {contextMenu && <AIContextMenu x={contextMenu.x} y={contextMenu.y} onAction={handleAIAction} onClose={() => setContextMenu(null)} />}
-      <div style={{ background: "#141414", borderRadius: 20, width: 780, maxWidth: "96vw", maxHeight: "92vh", overflow: "hidden", display: "flex", flexDirection: "column", border: "1px solid rgba(255,255,255,0.08)", boxShadow: "0 40px 100px rgba(0,0,0,0.9)" }} onClick={e => e.stopPropagation()}>
+      <div style={{ background: "#141414", borderRadius: 20, width: 780, maxWidth: "96vw", maxHeight: "92vh", overflow: "hidden", display: "flex", flexDirection: "column", border: "1px solid rgba(255,255,255,0.08)", boxShadow: "0 40px 100px rgba(0,0,0,0.9)" }} onClick={e => e.stopPropagation()} onMouseDown={e => e.stopPropagation()} onMouseUp={e => e.stopPropagation()}>
         <div style={{ padding: "22px 28px 18px", borderBottom: "1px solid rgba(255,255,255,0.06)", background: "#161616" }}>
           <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", gap: 16, marginBottom: 18 }}>
             <div style={{ flex: 1 }}>
