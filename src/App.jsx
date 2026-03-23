@@ -1,5 +1,6 @@
 import IdeasBank from "./IdeasBank.jsx";
 import Scripts from "./Scripts.jsx";
+import ScriptWriter from "./ScriptWriter.jsx";
 import Board from "./Board.jsx";
 import { useState, useEffect } from "react";
 import { getIdeas, getNotifications, getStatus, pauseScraping, resumeScraping, scrapeNow, analyzeNow, generateScript, getIntelligence, getProfile, generateSessionBrief, getSakuraStatus, getPipeline, savePipeline, getMissions, saveMissions, getPriorities, savePriorities } from "./api.js";
@@ -795,6 +796,7 @@ function Settings({scrapePaused, setScrapePaused}) {
 
 export default function RarisDashboard() {
   const [active,setActive] = useState("dashboard");
+  const handleSaveScript = async (data) => { try { await fetch("https://incogitable-orville-superwise.ngrok-free.dev/api/script", { method:"POST", headers:{"Content-Type":"application/json","ngrok-skip-browser-warning":"true"}, body:JSON.stringify({...data,saveOnly:true}) }); } catch(e) {} };
   const [realIdeas, setRealIdeas] = useState([]);
   const [apiOnline, setApiOnline] = useState(false);
   const [ideasLastUpdated, setIdeasLastUpdated] = useState(null);
@@ -833,7 +835,7 @@ export default function RarisDashboard() {
     {id:"revenue",label:"Revenue",icon:"$"},
     {id:"goals",label:"Goals",icon:"◎"},
     {id:"sakuraos",label:"SakuraOS",icon:"✦"},
-    {id:"ideasbank",label:"Ideas Bank",icon:"◈"},{id:"scripts",label:"Scripts",icon:"✍"},{id:"board",label:"Board",icon:"▦"},
+    {id:"ideasbank",label:"Ideas Bank",icon:"◈"},{id:"scripts",label:"Scripts",icon:"✍"},{id:"scriptwriter",label:"Idea to Script",icon:"✦"},{id:"board",label:"Board",icon:"▦"},
     {id:"settings",label:"Settings",icon:"⚙"},
   ];
   const pages = {
