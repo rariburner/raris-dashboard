@@ -53,7 +53,7 @@ function StatusSlider({ status, onChange }) {
       <div style={{ position: "relative", display: "flex", background: "#111", borderRadius: 10, padding: 3, border: "1px solid rgba(255,255,255,0.06)" }}>
         <div style={{ position: "absolute", top: 3, left: "calc(" + (idx * 25) + "% + 3px)", width: "calc(25% - 6px)", height: "calc(100% - 6px)", background: sc.bg, border: "1px solid " + sc.c, borderRadius: 8, transition: "left 0.25s cubic-bezier(0.4,0,0.2,1), background 0.25s, border-color 0.25s", boxShadow: "0 0 12px " + sc.c + "44" }} />
         {STATUSES.map((s) => (
-          <button key={s} onClick={() => onChange(s)} style={{ position: "relative", zIndex: 1, background: "transparent", border: "none", padding: "6px 16px", color: status === s ? sc.c : C.muted, fontSize: 12, fontWeight: status === s ? 700 : 400, cursor: "pointer", borderRadius: 7, transition: "color 0.2s", whiteSpace: "nowrap", fontFamily: FONT }}>
+          <button key={s} onClick={() => onChange(s)} style={{ position: "relative", zIndex: 1, background: "transparent", border: "none", padding: "6px 0", width: "72px", textAlign: "center", color: status === s ? sc.c : C.muted, fontSize: 12, fontWeight: status === s ? 700 : 400, cursor: "pointer", borderRadius: 7, transition: "color 0.2s", whiteSpace: "nowrap", fontFamily: FONT }}>
             {s}
           </button>
         ))}
