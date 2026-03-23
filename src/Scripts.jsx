@@ -70,12 +70,12 @@ function AIContextMenu({ x, y, onAction, onClose }) {
       <div onClick={e => e.stopPropagation()} onMouseDown={e => e.stopPropagation()} style={{ position: "fixed", left: Math.min(x, window.innerWidth - 280), top: Math.min(y, window.innerHeight - 420), background: "#1A1A1A", border: "1px solid rgba(255,255,255,0.12)", borderRadius: 14, padding: "10px", width: 270, zIndex: 9999, boxShadow: "0 24px 64px rgba(0,0,0,0.9)" }}>
         <div style={{ display: "flex", gap: 8, marginBottom: 8, padding: "2px" }}>
           <input value={customPrompt} onChange={e => setCustomPrompt(e.target.value)} onKeyDown={e => { if(e.key === "Enter" && customPrompt.trim()) { onAction("custom: " + customPrompt); onClose(); }}} placeholder="Ask Sakura what to do..." style={{ flex: 1, background: "#111", border: "1px solid rgba(255,255,255,0.08)", borderRadius: 8, padding: "8px 10px", color: "#fff", fontSize: 12, outline: "none", fontFamily: FONT }} autoFocus />
-          <button onClick={() => { if(customPrompt.trim()) { onAction("custom: " + customPrompt); onClose(); }}} style={{ background: C.orange, border: "none", borderRadius: 8, padding: "8px 12px", color: "#fff", fontSize: 14, cursor: "pointer" }}>↑</button>
+          <button onClick={e => { e.stopPropagation(); if(customPrompt.trim()) { onAction("custom: " + customPrompt); onClose(); }}} style={{ background: C.orange, border: "none", borderRadius: 8, padding: "8px 12px", color: "#fff", fontSize: 14, cursor: "pointer" }}>↑</button>
         </div>
         <div style={{ height: 1, background: "rgba(255,255,255,0.06)", margin: "6px 0" }} />
         <div style={{ fontSize: 10, color: "#555", padding: "4px 8px", fontWeight: 700, letterSpacing: 0.8 }}>EDIT SELECTION</div>
         {AI_ACTIONS.map(action => (
-          <button key={action.label} onClick={() => { onAction(action.label); onClose(); }}
+          <button key={action.label} onClick={e => { e.stopPropagation(); onAction(action.label); onClose(); }}
             style={{ display: "flex", alignItems: "center", gap: 10, width: "100%", background: "transparent", border: "none", padding: "9px 10px", color: "#ccc", fontSize: 13, cursor: "pointer", borderRadius: 8, textAlign: "left", fontFamily: FONT }}
             onMouseEnter={e => { e.currentTarget.style.background = "rgba(255,255,255,0.06)"; e.currentTarget.style.color = "#fff"; }}
             onMouseLeave={e => { e.currentTarget.style.background = "transparent"; e.currentTarget.style.color = "#ccc"; }}>
