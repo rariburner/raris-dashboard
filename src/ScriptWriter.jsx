@@ -17,7 +17,7 @@ const HOOKS = [
   {name:"Future Pacing",desc:'Paint a picture of what's coming. "5 years from now, creators who..."'},
   {name:"Pattern Interrupt",desc:'Start mid-sentence or unexpected. Breaks the scroll pattern instantly.'},
 ];
-const CTAS = ["Comment VIRAL","Comment PIPELINE","Comment SYSTEM","Comment FREE","Comment BUYERS","No CTA"];
+const CTAS = ["Comment VIRAL","Comment PIPELINE","Comment SYSTEM","Comment FREE","Comment BUYERS","No CTA","Custom"];
 const LENGTHS = [{label:"~30 sec",words:"130-150 words"},{label:"~45 sec",words:"175-200 words"},{label:"~60 sec",words:"225-250 words"}];
 
 export default function ScriptWriter({onSaveScript}){
@@ -26,6 +26,7 @@ export default function ScriptWriter({onSaveScript}){
   const [tones,setTones]=useState(["Convicted"]);
   const [hook,setHook]=useState(HOOKS[0].name);
   const [cta,setCta]=useState(CTAS[0]);
+  const [customCta,setCustomCta]=useState("");
   const [length,setLength]=useState(LENGTHS[2]);
   const [loading,setLoading]=useState(false);
   const [result,setResult]=useState(null);
@@ -70,6 +71,7 @@ export default function ScriptWriter({onSaveScript}){
   };
 
   const card={background:"#161616",borderRadius:16,padding:"24px",border:"1px solid rgba(255,255,255,0.07)"};
+  const cardAlways={background:"#161616",borderRadius:16,padding:"24px",border:"1px solid rgba(255,255,255,0.07)"};
   const cardFaded={background:"#161616",borderRadius:16,padding:"24px",border:"1px solid rgba(255,255,255,0.07)",opacity:0.35,pointerEvents:"none"};
   const lbl={fontSize:11,color:C.orange,fontWeight:800,letterSpacing:1.5,marginBottom:14};
   const ta100={width:"100%",background:"#141414",border:"1px solid rgba(255,255,255,0.07)",borderRadius:10,padding:"14px",color:"#e8e8e8",fontFamily:FONT,fontSize:14,lineHeight:1.8,resize:"none",outline:"none",boxSizing:"border-box",minHeight:100};
@@ -121,7 +123,7 @@ export default function ScriptWriter({onSaveScript}){
             </div>
           </div>
 
-          <div style={hasIdea?card:cardFaded}>
+          <div style={cardAlways}>
             <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:14}}>
               <div style={lbl}>STEP 4 — HOOK STYLE</div>
               <button onClick={()=>setShowGuide(!showGuide)} style={{background:showGuide?"rgba(124,58,237,0.2)":"rgba(255,255,255,0.06)",border:"1px solid "+(showGuide?"rgba(124,58,237,0.5)":"rgba(255,255,255,0.08)"),borderRadius:20,padding:"4px 12px",color:showGuide?C.purple:"#888",fontSize:11,fontWeight:700,cursor:"pointer",fontFamily:FONT}}>
@@ -148,6 +150,7 @@ export default function ScriptWriter({onSaveScript}){
             <div style={{display:"flex",gap:8,flexWrap:"wrap"}}>
               {CTAS.map(c=><button key={c} onClick={()=>setCta(c)} style={pill(cta===c)}>{c}</button>)}
             </div>
+            {cta==="Custom"&&<input value={customCta} onChange={e=>setCustomCta(e.target.value)} placeholder="Type your custom CTA..." style={{width:"100%",background:"#141414",border:"1px solid rgba(255,107,0,0.4)",borderRadius:10,padding:"12px 14px",color:"#fff",fontFamily:FONT,fontSize:13,outline:"none",boxSizing:"border-box",marginTop:12}}/>}
           </div>
 
           <div style={hasIdea?card:cardFaded}>
@@ -166,10 +169,10 @@ export default function ScriptWriter({onSaveScript}){
 
         <div style={{display:"flex",flexDirection:"column",gap:16,minHeight:400}}>
           {loading&&(
-            <div style={{background:"#161616",borderRadius:16,border:"1px solid rgba(124,58,237,0.3)",padding:"60px 24px",display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",gap:20}}>
-              <div className="spinner"/>
-              <div style={{fontSize:14,color:C.purple,fontWeight:600}}>Sakura is writing your script...</div>
-              <div style={{fontSize:12,color:"#555",textAlign:"center"}}>Using {hook} hook · {length.label} · {tones.join(" + ")}</div>
+            <div style={{background:"#161616",borderRadius:16,border:"1px solid rgba(124,58,237,0.3)",padding:"80px 40px",display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",gap:24,minHeight:400}}>
+              <div className="spinner" style={{width:56,height:56,borderWidth:4}}/>
+              <div style={{fontSize:22,color:"#fff",fontWeight:800,textAlign:"center"}}>Sakura is generating{String.fromCharCode(10)}your script...</div>
+              <div style={{fontSize:13,color:"#666",textAlign:"center",lineHeight:1.7}}>Hook: <span style={{color:C.purple}}>{hook}</span><br/>Format: <span style={{color:C.orange}}>{format.split(" — ")[0]}</span><br/>Length: <span style={{color:"#aaa"}}>{length.label}</span></div>
             </div>
           )}
           {result&&(
