@@ -307,32 +307,60 @@ export default function Scripts() {
         </div>
       )}
 
-      <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))", gap: 16 }}>
         {filtered.map(script => {
           const sc = STATUS_COLORS[script.status] || STATUS_COLORS["Draft"];
           const wordCount = (script.script || "").split(/\s+/).filter(Boolean).length;
           const isSelected = selected.has(script.id);
           return (
-            <div key={script.id} style={{ background: isSelected ? "rgba(255,107,0,0.06)" : C.card2, borderRadius: 14, border: "1px solid " + (isSelected ? C.orange : "rgba(255,255,255,0.07)"), borderLeft: "3px solid " + C.orange, display: "flex", alignItems: "stretch" }}>
-              <div onClick={() => toggleSelect(script.id)} style={{ width: 44, display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer", flexShrink: 0 }}>
-                <div style={{ width: 18, height: 18, borderRadius: 5, border: "2px solid " + (isSelected ? C.orange : "#444"), background: isSelected ? C.orange : "transparent", display: "flex", alignItems: "center", justifyContent: "center" }}>
-                  {isSelected && <span style={{ color: "#fff", fontSize: 11, fontWeight: 900 }}>✓</span>}
-                </div>
+            <div key={script.id}
+              onClick={() => setEditingScript(script)}
+              style={{
+                background: isSelected
+                  ? "linear-gradient(145deg, rgba(255,107,0,0.12), #1A1A1A)"
+                  : "linear-gradient(145deg, #1E1E1E, #161616)",
+                borderRadius: 16,
+                border: "1px solid " + (isSelected ? C.orange : "rgba(255,255,255,0.07)"),
+                padding: "20px",
+                cursor: "pointer",
+                display: "flex",
+                flexDirection: "column",
+                gap: 0,
+                transition: "border-color 0.2s, box-shadow 0.2s, transform 0.15s",
+                boxShadow: isSelected ? "0 0 0 2px rgba(255,107,0,0.3)" : "none",
+                position: "relative",
+              }}
+              onMouseEnter={e => { if(!isSelected) { e.currentTarget.style.borderColor = "rgba(255,107,0,0.4)"; e.currentTarget.style.boxShadow = "0 8px 32px rgba(0,0,0,0.4)"; e.currentTarget.style.transform = "translateY(-2px)"; }}}
+              onMouseLeave={e => { if(!isSelected) { e.currentTarget.style.borderColor = "rgba(255,255,255,0.07)"; e.currentTarget.style.boxShadow = "none"; e.currentTarget.style.transform = "translateY(0)"; }}}
+            >
+              {/* Checkbox */}
+              <div onClick={e => { e.stopPropagation(); toggleSelect(script.id); }}
+                style={{ position: "absolute", top: 14, left: 14, width: 18, height: 18, borderRadius: 5, border: "2px solid " + (isSelected ? C.orange : "#333"), background: isSelected ? C.orange : "transparent", display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer", zIndex: 1 }}>
+                {isSelected && <span style={{ color: "#fff", fontSize: 10, fontWeight: 900 }}>✓</span>}
               </div>
-              <div style={{ flex: 1, padding: "16px 14px 16px 0", cursor: "pointer" }} onClick={() => setEditingScript(script)}>
-                <div style={{ fontSize: 14, fontWeight: 700, color: "#fff", marginBottom: 10, lineHeight: 1.5 }}>"{script.hook}"</div>
-                <div style={{ display: "flex", gap: 8, flexWrap: "wrap", alignItems: "center" }}>
-                  <span style={{ background: C.orange + "22", color: C.orange, fontSize: 10, fontWeight: 700, padding: "2px 8px", borderRadius: 5 }}>{script.format}</span>
-                  <span style={{ background: sc.bg, color: sc.c, fontSize: 10, fontWeight: 700, padding: "2px 8px", borderRadius: 5 }}>{script.status}</span>
-                  <span style={{ fontSize: 11, color: C.muted }}>{wordCount} words</span>
-                  <span style={{ fontSize: 11, color: C.muted }}>·</span>
-                  <span style={{ fontSize: 11, color: C.muted }}>{new Date(script.date).toLocaleDateString("en-US", { month: "short", day: "numeric" })}</span>
-                </div>
+
+              {/* Top row: format + word count */}
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 14, paddingLeft: 28 }}>
+                <span style={{ background: "rgba(255,107,0,0.15)", color: C.orange, fontSize: 10, fontWeight: 700, padding: "3px 10px", borderRadius: 20 }}>{script.format || "Script"}</span>
+                <span style={{ fontSize: 11, color: "#555", fontWeight: 600 }}>{wordCount} words</span>
               </div>
-              <div style={{ display: "flex", alignItems: "center", padding: "0 16px", gap: 10 }}>
-                <button onClick={e => { e.stopPropagation(); setEditingScript(script); }} style={{ background: "rgba(255,107,0,0.12)", border: "1px solid rgba(255,107,0,0.3)", borderRadius: 8, padding: "7px 16px", color: C.orange, fontSize: 12, fontWeight: 700, cursor: "pointer", fontFamily: FONT }}>Edit</button>
-                <button onClick={e => { e.stopPropagation(); handleDelete(script.id); }} style={{ background: "transparent", border: "none", color: "#555", fontSize: 20, cursor: "pointer", lineHeight: 1, padding: "0 4px" }}>×</button>
+
+              {/* Hook text */}
+              <div style={{ fontSize: 14, fontWeight: 700, color: "#fff", lineHeight: 1.6, marginBottom: 16, flex: 1, display: "-webkit-box", WebkitLineClamp: 3, WebkitBoxOrient: "vertical", overflow: "hidden" }}>
+                "{script.hook}"
               </div>
+
+              {/* Date + status */}
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 16 }}>
+                <span style={{ fontSize: 11, color: "#555" }}>{new Date(script.date).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}</span>
+                <span style={{ background: sc.bg, color: sc.c, fontSize: 10, fontWeight: 700, padding: "3px 10px", borderRadius: 20, border: "1px solid " + sc.c + "44" }}>{script.status}</span>
+              </div>
+
+              {/* Edit button */}
+              <button onClick={e => { e.stopPropagation(); setEditingScript(script); }}
+                style={{ width: "100%", background: "linear-gradient(135deg, #FF6B00, #E55A00)", border: "none", borderRadius: 10, padding: "11px", color: "#fff", fontSize: 13, fontWeight: 700, cursor: "pointer", fontFamily: FONT, letterSpacing: 0.3 }}>
+                Edit Script
+              </button>
             </div>
           );
         })}
