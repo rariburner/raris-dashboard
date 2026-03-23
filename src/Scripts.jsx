@@ -16,14 +16,14 @@ const STATUS_COLORS = {
 };
 
 const AI_ACTIONS = [
-  { label: "Improve writing", icon: "\u2726" },
-  { label: "Make shorter", icon: "\u2193" },
-  { label: "Make longer", icon: "\u2191" },
-  { label: "More convicted", icon: "\u26a1" },
+  { label: "Improve writing", icon: "✦" },
+  { label: "Make shorter", icon: "↓" },
+  { label: "Make longer", icon: "↑" },
+  { label: "More convicted", icon: "⚡" },
   { label: "More casual", icon: "~" },
-  { label: "Add my $400K story", icon: "\ud83d\udcb0" },
-  { label: "Sharpen the hook", icon: "\ud83c\udfaf" },
-  { label: "Fix grammar", icon: "\u2713" },
+  { label: "Add my $400K story", icon: "💰" },
+  { label: "Sharpen the hook", icon: "🎯" },
+  { label: "Fix grammar", icon: "✓" },
 ];
 
 const FONT = "-apple-system, BlinkMacSystemFont, \'Segoe UI\', Roboto, sans-serif";
@@ -32,7 +32,7 @@ function ConfirmDialog({ message, onConfirm, onCancel }) {
   return (
     <div style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.85)", zIndex: 10000, display: "flex", alignItems: "center", justifyContent: "center" }}>
       <div style={{ background: "#1A1A1A", borderRadius: 18, padding: "36px", width: 380, border: "1px solid rgba(255,255,255,0.1)", textAlign: "center" }}>
-        <div style={{ width: 56, height: 56, borderRadius: "50%", background: "rgba(239,68,68,0.12)", border: "1px solid rgba(239,68,68,0.3)", display: "flex", alignItems: "center", justifyContent: "center", margin: "0 auto 20px", fontSize: 24 }}>\ud83d\uddd1\ufe0f</div>
+        <div style={{ width: 56, height: 56, borderRadius: "50%", background: "rgba(239,68,68,0.12)", border: "1px solid rgba(239,68,68,0.3)", display: "flex", alignItems: "center", justifyContent: "center", margin: "0 auto 20px", fontSize: 24 }}>🗑️</div>
         <div style={{ fontSize: 18, fontWeight: 800, color: "#fff", marginBottom: 10 }}>Delete Scripts?</div>
         <div style={{ fontSize: 14, color: C.muted, marginBottom: 28, lineHeight: 1.6 }}>{message}</div>
         <div style={{ display: "flex", gap: 12, justifyContent: "center" }}>
@@ -70,7 +70,7 @@ function AIContextMenu({ x, y, onAction, onClose }) {
       <div style={{ position: "fixed", left: Math.min(x, window.innerWidth - 280), top: Math.min(y, window.innerHeight - 420), background: "#1A1A1A", border: "1px solid rgba(255,255,255,0.12)", borderRadius: 14, padding: "10px", width: 270, zIndex: 9999, boxShadow: "0 24px 64px rgba(0,0,0,0.9)" }}>
         <div style={{ display: "flex", gap: 8, marginBottom: 8, padding: "2px" }}>
           <input value={customPrompt} onChange={e => setCustomPrompt(e.target.value)} onKeyDown={e => { if(e.key === "Enter" && customPrompt.trim()) { onAction("custom: " + customPrompt); onClose(); }}} placeholder="Ask Sakura what to do..." style={{ flex: 1, background: "#111", border: "1px solid rgba(255,255,255,0.08)", borderRadius: 8, padding: "8px 10px", color: "#fff", fontSize: 12, outline: "none", fontFamily: FONT }} autoFocus />
-          <button onClick={() => { if(customPrompt.trim()) { onAction("custom: " + customPrompt); onClose(); }}} style={{ background: C.orange, border: "none", borderRadius: 8, padding: "8px 12px", color: "#fff", fontSize: 14, cursor: "pointer" }}>\u2191</button>
+          <button onClick={() => { if(customPrompt.trim()) { onAction("custom: " + customPrompt); onClose(); }}} style={{ background: C.orange, border: "none", borderRadius: 8, padding: "8px 12px", color: "#fff", fontSize: 14, cursor: "pointer" }}>↑</button>
         </div>
         <div style={{ height: 1, background: "rgba(255,255,255,0.06)", margin: "6px 0" }} />
         <div style={{ fontSize: 10, color: "#555", padding: "4px 8px", fontWeight: 700, letterSpacing: 0.8 }}>EDIT SELECTION</div>
@@ -166,26 +166,26 @@ function ScriptEditor({ script, onClose, onSave, onDelete }) {
             </div>
             <div style={{ display: "flex", gap: 8, alignItems: "center", flexShrink: 0 }}>
               <span style={{ fontSize: 11, color: "#555", background: "#1E1E1E", padding: "4px 10px", borderRadius: 6 }}>{wordCount} words</span>
-              {history.length > 0 && <button onClick={() => { setSections(history[history.length-1]); setHistory(h => h.slice(0,-1)); }} style={{ background: "rgba(255,255,255,0.06)", border: "1px solid rgba(255,255,255,0.08)", borderRadius: 8, padding: "6px 12px", color: "#aaa", fontSize: 11, cursor: "pointer", fontFamily: FONT }}>\u21a9 Undo</button>}
-              <button onClick={handleCopy} style={{ background: copied ? "rgba(0,208,132,0.12)" : "rgba(255,255,255,0.06)", border: "1px solid " + (copied ? C.green : "rgba(255,255,255,0.08)"), borderRadius: 8, padding: "6px 14px", color: copied ? C.green : "#aaa", fontSize: 11, cursor: "pointer", fontFamily: FONT }}>{copied ? "\u2713 Copied" : "Copy"}</button>
-              <button onClick={onClose} style={{ background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.06)", borderRadius: 8, width: 32, height: 32, color: "#666", fontSize: 18, cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center" }}>\u00d7</button>
+              {history.length > 0 && <button onClick={() => { setSections(history[history.length-1]); setHistory(h => h.slice(0,-1)); }} style={{ background: "rgba(255,255,255,0.06)", border: "1px solid rgba(255,255,255,0.08)", borderRadius: 8, padding: "6px 12px", color: "#aaa", fontSize: 11, cursor: "pointer", fontFamily: FONT }}>↩ Undo</button>}
+              <button onClick={handleCopy} style={{ background: copied ? "rgba(0,208,132,0.12)" : "rgba(255,255,255,0.06)", border: "1px solid " + (copied ? C.green : "rgba(255,255,255,0.08)"), borderRadius: 8, padding: "6px 14px", color: copied ? C.green : "#aaa", fontSize: 11, cursor: "pointer", fontFamily: FONT }}>{copied ? "✓ Copied" : "Copy"}</button>
+              <button onClick={onClose} style={{ background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.06)", borderRadius: 8, width: 32, height: 32, color: "#666", fontSize: 18, cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center" }}>×</button>
             </div>
           </div>
           <StatusSlider status={status} onChange={(s) => { setStatus(s); onSave(script.id, fullScript, s); }} />
-          {loading && <div style={{ fontSize: 11, color: C.purple, marginTop: 10 }}>\u2726 Sakura is rewriting...</div>}
+          {loading && <div style={{ fontSize: 11, color: C.purple, marginTop: 10 }}>✦ Sakura is rewriting...</div>}
         </div>
         <div style={{ flex: 1, overflowY: "auto", padding: "24px 28px", display: "flex", flexDirection: "column", gap: 20, scrollbarWidth: "thin", scrollbarColor: "#333 #111" }}>
           <div style={{ fontSize: 11, color: "#444", marginBottom: -8 }}>Select any text then right-click to get AI suggestions from Sakura</div>
           <div>
-            {sectionLabel("PART 1 \u2014 HOOK", C.orange)}
+            {sectionLabel("PART 1 — HOOK", C.orange)}
             <textarea value={sections.hook} onChange={e => setSections(p => ({...p, hook: e.target.value}))} onContextMenu={handleContextMenu("hook")} style={{...ta, minHeight: 90}} rows={3} />
           </div>
           <div>
-            {sectionLabel("PART 2 \u2014 BODY", "#aaa")}
+            {sectionLabel("PART 2 — BODY", "#aaa")}
             <textarea value={sections.body} onChange={e => setSections(p => ({...p, body: e.target.value}))} onContextMenu={handleContextMenu("body")} style={{...ta, minHeight: 220}} rows={9} />
           </div>
           <div>
-            {sectionLabel("PART 3 \u2014 CTA", C.green)}
+            {sectionLabel("PART 3 — CTA", C.green)}
             <textarea value={sections.cta} onChange={e => setSections(p => ({...p, cta: e.target.value}))} onContextMenu={handleContextMenu("cta")} style={{...ta, minHeight: 70}} rows={2} />
           </div>
           <div>
@@ -241,13 +241,13 @@ export default function Scripts() {
   const exportDoc = () => {
     const sel = scripts.filter(s => selected.has(s.id));
     const date = new Date().toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" });
-    let content = "MIKE RARI SCRIPTS\nGenerated: " + date + "\n" + "\u2500".repeat(40) + "\n\n";
-    sel.forEach((s, i) => { content += "SCRIPT " + (i+1) + " \u2014 " + s.format + "\nHook: " + s.hook + "\nCTA: " + s.cta + "\nStatus: " + s.status + "\n\n" + s.script + "\n\n" + "\u2500".repeat(40) + "\n\n"; });
+    let content = "MIKE RARI SCRIPTS\nGenerated: " + date + "\n" + "─".repeat(40) + "\n\n";
+    sel.forEach((s, i) => { content += "SCRIPT " + (i+1) + " — " + s.format + "\nHook: " + s.hook + "\nCTA: " + s.cta + "\nStatus: " + s.status + "\n\n" + s.script + "\n\n" + "─".repeat(40) + "\n\n"; });
     const blob = new Blob([content], { type: "text/plain" });
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
     a.href = url;
-    a.download = "Mike Rari Scripts \u2014 " + date + " \u2014 " + sel.length + " Scripts.txt";
+    a.download = "Mike Rari Scripts — " + date + " — " + sel.length + " Scripts.txt";
     a.click();
     URL.revokeObjectURL(url);
     setSelected(new Set());
@@ -266,14 +266,14 @@ export default function Scripts() {
       <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", marginBottom: 24, flexWrap: "wrap", gap: 16 }}>
         <div>
           <h1 style={{ fontSize: 32, fontWeight: 900, color: "#fff", margin: 0 }}>Scripts</h1>
-          <div style={{ fontSize: 13, color: C.muted, marginTop: 4 }}>{scripts.length} total \u00b7 {counts.Draft} drafts \u00b7 {counts.Ready} ready to record</div>
+          <div style={{ fontSize: 13, color: C.muted, marginTop: 4 }}>{scripts.length} total · {counts.Draft} drafts · {counts.Ready} ready to record</div>
         </div>
         <div style={{ display: "flex", gap: 10, alignItems: "center" }}>
           {selected.size > 0 && (
             <>
               <span style={{ fontSize: 13, color: C.muted }}>{selected.size} selected</span>
               <button onClick={exportDoc} style={{ background: C.green, border: "none", borderRadius: 8, padding: "9px 18px", color: "#fff", fontSize: 13, fontWeight: 700, cursor: "pointer", fontFamily: FONT }}>Export to Doc</button>
-              <button onClick={() => setConfirmDelete("Are you sure you want to delete " + selected.size + " script" + (selected.size > 1 ? "s" : "") + "? This cannot be undone.")} style={{ background: "rgba(239,68,68,0.12)", border: "1px solid rgba(239,68,68,0.3)", borderRadius: 8, padding: "9px 14px", color: C.red, fontSize: 13, fontWeight: 700, cursor: "pointer", fontFamily: FONT }}>\u00d7 Delete</button>
+              <button onClick={() => setConfirmDelete("Are you sure you want to delete " + selected.size + " script" + (selected.size > 1 ? "s" : "") + "? This cannot be undone.")} style={{ background: "rgba(239,68,68,0.12)", border: "1px solid rgba(239,68,68,0.3)", borderRadius: 8, padding: "9px 14px", color: C.red, fontSize: 13, fontWeight: 700, cursor: "pointer", fontFamily: FONT }}>× Delete</button>
               <button onClick={() => setSelected(new Set())} style={{ background: C.card2, border: "1px solid rgba(255,255,255,0.07)", borderRadius: 8, padding: "9px 14px", color: C.muted, fontSize: 13, cursor: "pointer", fontFamily: FONT }}>Clear</button>
             </>
           )}
@@ -301,9 +301,9 @@ export default function Scripts() {
       {loading && <div style={{ color: C.muted, textAlign: "center", padding: 40 }}>Loading scripts...</div>}
       {!loading && filtered.length === 0 && (
         <div style={{ color: C.muted, textAlign: "center", padding: 60 }}>
-          <div style={{ fontSize: 32, marginBottom: 12 }}>\u2726</div>
+          <div style={{ fontSize: 32, marginBottom: 12 }}>✦</div>
           <div style={{ fontSize: 16, fontWeight: 700, color: "#fff", marginBottom: 8 }}>No scripts yet</div>
-          <div style={{ fontSize: 13 }}>Click "Script \u2192" on any idea to generate your first script.</div>
+          <div style={{ fontSize: 13 }}>Click "Script →" on any idea to generate your first script.</div>
         </div>
       )}
 
@@ -316,7 +316,7 @@ export default function Scripts() {
             <div key={script.id} style={{ background: isSelected ? "rgba(255,107,0,0.06)" : C.card2, borderRadius: 14, border: "1px solid " + (isSelected ? C.orange : "rgba(255,255,255,0.07)"), borderLeft: "3px solid " + C.orange, display: "flex", alignItems: "stretch" }}>
               <div onClick={() => toggleSelect(script.id)} style={{ width: 44, display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer", flexShrink: 0 }}>
                 <div style={{ width: 18, height: 18, borderRadius: 5, border: "2px solid " + (isSelected ? C.orange : "#444"), background: isSelected ? C.orange : "transparent", display: "flex", alignItems: "center", justifyContent: "center" }}>
-                  {isSelected && <span style={{ color: "#fff", fontSize: 11, fontWeight: 900 }}>\u2713</span>}
+                  {isSelected && <span style={{ color: "#fff", fontSize: 11, fontWeight: 900 }}>✓</span>}
                 </div>
               </div>
               <div style={{ flex: 1, padding: "16px 14px 16px 0", cursor: "pointer" }} onClick={() => setEditingScript(script)}>
@@ -325,13 +325,13 @@ export default function Scripts() {
                   <span style={{ background: C.orange + "22", color: C.orange, fontSize: 10, fontWeight: 700, padding: "2px 8px", borderRadius: 5 }}>{script.format}</span>
                   <span style={{ background: sc.bg, color: sc.c, fontSize: 10, fontWeight: 700, padding: "2px 8px", borderRadius: 5 }}>{script.status}</span>
                   <span style={{ fontSize: 11, color: C.muted }}>{wordCount} words</span>
-                  <span style={{ fontSize: 11, color: C.muted }}>\u00b7</span>
+                  <span style={{ fontSize: 11, color: C.muted }}>·</span>
                   <span style={{ fontSize: 11, color: C.muted }}>{new Date(script.date).toLocaleDateString("en-US", { month: "short", day: "numeric" })}</span>
                 </div>
               </div>
               <div style={{ display: "flex", alignItems: "center", padding: "0 16px", gap: 10 }}>
                 <button onClick={e => { e.stopPropagation(); setEditingScript(script); }} style={{ background: "rgba(255,107,0,0.12)", border: "1px solid rgba(255,107,0,0.3)", borderRadius: 8, padding: "7px 16px", color: C.orange, fontSize: 12, fontWeight: 700, cursor: "pointer", fontFamily: FONT }}>Edit</button>
-                <button onClick={e => { e.stopPropagation(); handleDelete(script.id); }} style={{ background: "transparent", border: "none", color: "#555", fontSize: 20, cursor: "pointer", lineHeight: 1, padding: "0 4px" }}>\u00d7</button>
+                <button onClick={e => { e.stopPropagation(); handleDelete(script.id); }} style={{ background: "transparent", border: "none", color: "#555", fontSize: 20, cursor: "pointer", lineHeight: 1, padding: "0 4px" }}>×</button>
               </div>
             </div>
           );
