@@ -841,7 +841,7 @@ export default function RarisDashboard() {
   const pages = {
     dashboard:<Dashboard realIdeas={realIdeas} lastUpdated={ideasLastUpdated} profileData={profileData}/>,intelligence:<Intelligence/>,
     revenue:<Revenue/>,goals:<Goals profileData={profileData}/>,
-    sakuraos:<SakuraOS/>,ideasbank:<IdeasBank/>,scripts:<Scripts/>,board:<Board/>,settings:<Settings scrapePaused={scrapePaused} setScrapePaused={setScrapePaused}/>
+    sakuraos:<SakuraOS/>,ideasbank:<IdeasBank/>,scripts:<Scripts/>,scriptwriter:<ScriptWriter onSaveScript={handleSaveScript}/>,board:<Board/>,settings:<Settings scrapePaused={scrapePaused} setScrapePaused={setScrapePaused}/>
   };
   return (
     <div style={{display:"flex",height:"100vh",background:C.bg,fontFamily:"system-ui,-apple-system,sans-serif",overflow:"hidden"}}>
