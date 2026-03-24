@@ -202,7 +202,7 @@ export default function ScriptWriter({onSaveScript}){
         <div style={{fontSize:13,color:"#888",marginTop:4}}>Drop a raw idea. Sakura builds the script.</div>
       </div>
 
-      <div style={{display:"grid",gridTemplateColumns:showRight?"1fr 1fr":"1fr",gap:28,maxWidth:showRight?"100%":740,alignItems:"start"}}>
+      <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:28,maxWidth:"100%",alignItems:"start"}}>
         <div style={{display:"flex",flexDirection:"column",gap:16}}>
 
           <div style={S.card}>
