@@ -111,7 +111,7 @@ export default function ScriptWriter({onSaveScript}){
     try{
       const res=await apiGenerateHooks(prompt);
       if(res.result){
-        const lines=res.script.split("\n").filter(l=>l.match(/^HOOK [123]:/));
+        const lines=res.result.split("\n").filter(l=>l.match(/^HOOK [123]:/));
         const hooks=lines.map(l=>l.replace(/^HOOK [123]:\s*/,"").trim());
         if(hooks.length>=3)setHookOptions(hooks);
       }
@@ -123,7 +123,7 @@ export default function ScriptWriter({onSaveScript}){
     setScriptLoading(true);setResult(null);setSuggestions([]);setFadeIn(false);
     const prompt=buildPrompt(hookText);
     try{
-      const res=await apiGenerateHooks(prompt);
+      const res=await generateCustomScript(prompt,idea,format,activeCta);
       if(res.script){
         const parts=res.script.split("---SUGGESTIONS---");
         const scriptText=parts[0].trim();
