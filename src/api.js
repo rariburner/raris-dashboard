@@ -99,3 +99,12 @@ export async function analyzeNow() {
   const res = await fetch(`${API_URL}/api/analyze-now`, { method: 'POST', headers: { 'ngrok-skip-browser-warning': 'true' } });
   return res.json();
 }
+export async function generateHooks(prompt) {
+  const res = await fetch(`${API_URL}/api/generate-hooks`, { method: "POST", headers: { "Content-Type": "application/json", "ngrok-skip-browser-warning": "true" }, body: JSON.stringify({ prompt }) });
+  return res.json();
+}
+
+export async function generateCustomScript(prompt, hook, format, cta) {
+  const res = await fetch(`${API_URL}/api/generate-custom`, { method: "POST", headers: { "Content-Type": "application/json", "ngrok-skip-browser-warning": "true" }, body: JSON.stringify({ prompt, hook, format, cta }) });
+  return res.json();
+}
