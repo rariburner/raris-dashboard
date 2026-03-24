@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { generateScript } from "./api.js";
+import { generateHooks as apiGenerateHooks, generateCustomScript } from "./api.js";
 
 const C = { orange:"#FF6B00",green:"#00D084",purple:"#7C3AED" };
 const FONT = "-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif";
@@ -109,8 +109,8 @@ export default function ScriptWriter({onSaveScript}){
     const suggestionLine=hookSuggestion.trim()?"\nExtra note from Mike: "+hookSuggestion:"";
     const prompt="You are Sakura, writing hook options for Mike Rari (@realmikerari).\n\nMike's voice: Observer, nonchalant, convicted. He notices something true and says it plainly.\n\nGenerate exactly 3 different hook options for this video idea. Each hook should be 1-2 sentences max. Make each one feel distinctly different in approach.\n\nRAW IDEA: "+idea+"\nFORMAT: "+format+"\nHOOK STYLE: "+hook+"\nTONE: "+toneObj.label+suggestionLine+"\n\nRespond with exactly this format:\nHOOK 1: [hook text]\nHOOK 2: [hook text]\nHOOK 3: [hook text]";
     try{
-      const res=await generateScript(idea,format,activeCta,prompt,idea);
-      if(res.script){
+      const res=await apiGenerateHooks(prompt);
+      if(res.result){
         const lines=res.script.split("\n").filter(l=>l.match(/^HOOK [123]:/));
         const hooks=lines.map(l=>l.replace(/^HOOK [123]:\s*/,"").trim());
         if(hooks.length>=3)setHookOptions(hooks);
@@ -123,7 +123,7 @@ export default function ScriptWriter({onSaveScript}){
     setScriptLoading(true);setResult(null);setSuggestions([]);setFadeIn(false);
     const prompt=buildPrompt(hookText);
     try{
-      const res=await generateScript(idea,format,activeCta,prompt,idea);
+      const res=await apiGenerateHooks(prompt);
       if(res.script){
         const parts=res.script.split("---SUGGESTIONS---");
         const scriptText=parts[0].trim();
@@ -153,9 +153,9 @@ export default function ScriptWriter({onSaveScript}){
     setInlineLoading(true);
     const prompt=action.startsWith("custom:")?action.replace("custom:","").trim()+" this: \""+contextMenu.selected+"\"":action+" this text (reply with ONLY the rewritten text, nothing else): \""+contextMenu.selected+"\"";
     try{
-      const res=await generateScript(contextMenu.selected,"edit","",prompt,contextMenu.selected);
+      const res=await generateCustomScript(prompt,contextMenu.selected,"edit","");
       if(res.script){
-        const newText=res.script.trim();
+        const newText=res.script.replace(/^["']|["']$/g,'').trim();
         if(activeSection==="hook")setHookText(prev=>prev.replace(contextMenu.selected,newText));
         if(activeSection==="body")setBodyText(prev=>prev.replace(contextMenu.selected,newText));
         if(activeSection==="cta")setCtaText(prev=>prev.replace(contextMenu.selected,newText));
@@ -221,7 +221,7 @@ export default function ScriptWriter({onSaveScript}){
             <span style={S.lbl}>STEP 3 — TONE</span>
             <div style={{display:"flex",flexDirection:"column",gap:8}}>
               {TONES.map(t=>(
-                <button key={t.id} onClick={()=>setTone(t.id)} style={{background:tone===t.id?"rgba(255,107,0,0.12)":"#111",border:"1px solid "+(tone===t.id?C.orange:"rgba(255,255,255,0.06)"),borderRadius:10,padding:"12px 16px",cursor:"pointer",textAlign:"left",fontFamily:FONT}}>
+                <button key={t.id} onClick={()=>setTone(tone===t.id?"":t.id)} style={{background:tone===t.id?"rgba(255,107,0,0.12)":"#111",border:"1px solid "+(tone===t.id?C.orange:"rgba(255,255,255,0.06)"),borderRadius:10,padding:"12px 16px",cursor:"pointer",textAlign:"left",fontFamily:FONT}}>
                   <div style={{fontSize:13,fontWeight:tone===t.id?700:400,color:tone===t.id?C.orange:"#aaa",marginBottom:3}}>{t.label}</div>
                   <div style={{fontSize:11,color:"#555"}}>{t.desc}</div>
                 </button>
