@@ -270,7 +270,7 @@ function Dashboard({realIdeas=[], lastUpdated=null, profileData={followers:0,pos
   );
 }
 
-function Intelligence() {
+function Intelligence({onRariify}) {
   const [filter,setFilter] = useState("All");
   const [intelData, setIntelData] = useState(null);
   const [lastUpdated, setLastUpdated] = useState(null);
@@ -358,7 +358,7 @@ function Intelligence() {
                 <Tag label={item.format}/>
                 <div style={{display:"flex",gap:14}}>
                   <a href={item.url} target="_blank" rel="noopener noreferrer" style={{fontSize:13,color:C.muted,cursor:"pointer",textDecoration:"none"}}>⬡ Watch</a>
-                  <span style={{fontSize:13,color:C.orange,cursor:"pointer",fontWeight:700}}>✦ Mike Rari-ify</span>
+                  <span onClick={()=>onRariify(item.hook)} style={{fontSize:13,color:C.orange,cursor:"pointer",fontWeight:700,display:"flex",alignItems:"center",gap:4}}>✦ Rari-ify</span>
                 </div>
               </div>
             </div>
@@ -721,6 +721,29 @@ function Settings({scrapePaused, setScrapePaused}) {
   const [notifs,setNotifs] = useState({ideas:true,sales:true,sakura:false});
   const [theme,setTheme] = useState("Dark");
   const [saved, setSaved] = useState(false);
+  const [currentModel, setCurrentModel] = useState("vercel-ai-gateway/anthropic/claude-opus-4.6");
+  const [modelSaving, setModelSaving] = useState(false);
+  const [modelSaved, setModelSaved] = useState(false);
+  const MODELS = [
+    {id:"vercel-ai-gateway/anthropic/claude-opus-4.6", label:"Claude Opus 4.6", desc:"Most capable. Best for complex scripts and analysis.", cost:"~$0.30-0.50/msg"},
+    {id:"vercel-ai-gateway/anthropic/claude-sonnet-4-5", label:"Claude Sonnet 4.5", desc:"Fast and smart. Best for daily use and script gen.", cost:"~$0.05-0.10/msg"},
+    {id:"vercel-ai-gateway/anthropic/claude-haiku-3-5", label:"Claude Haiku 3.5", desc:"Fastest and cheapest. Good for simple tasks.", cost:"~$0.01-0.02/msg"},
+  ];
+  const API = "https://incogitable-orville-superwise.ngrok-free.dev";
+  useEffect(()=>{
+    fetch(API+"/api/current-model",{headers:{"ngrok-skip-browser-warning":"true"}})
+      .then(r=>r.json()).then(d=>{ if(d.model) setCurrentModel(d.model); }).catch(()=>{});
+  },[]);
+  const switchModel = async (modelId) => {
+    if(modelId === currentModel) return;
+    setModelSaving(true);
+    try {
+      const res = await fetch(API+"/api/switch-model", {method:"POST", headers:{"Content-Type":"application/json","ngrok-skip-browser-warning":"true"}, body:JSON.stringify({model:modelId})});
+      const d = await res.json();
+      if(d.success){ setCurrentModel(modelId); setModelSaved(true); setTimeout(()=>setModelSaved(false),2500); }
+    } catch(e){}
+    setModelSaving(false);
+  };
   const handleSave = () => { setSaved(true); setTimeout(() => setSaved(false), 2000); };
 
   return (
@@ -786,6 +809,24 @@ function Settings({scrapePaused, setScrapePaused}) {
           </div>
         ))}
       </div>
+      <div style={{background:C.card,borderRadius:18,padding:"26px 28px",marginBottom:28,border:`1px solid ${C.border}`}}>
+        <h2 style={{fontSize:20,fontWeight:800,color:"#fff",marginBottom:6}}>🧠 AI Model</h2>
+        <div style={{fontSize:13,color:"#666",marginBottom:20}}>Controls which model Sakura and Idea to Script use. Changing this takes effect immediately.</div>
+        {modelSaved&&<div style={{background:"rgba(0,208,132,0.1)",border:"1px solid #00D084",borderRadius:10,padding:"10px 16px",marginBottom:16,fontSize:13,color:"#00D084",fontWeight:700}}>✓ Model switched successfully</div>}
+        {MODELS.map(m=>(
+          <div key={m.id} onClick={()=>switchModel(m.id)} style={{display:"flex",justifyContent:"space-between",alignItems:"center",padding:"16px",marginBottom:10,borderRadius:12,border:"1px solid "+(currentModel===m.id?"#FF6B00":"rgba(255,255,255,0.07)"),background:currentModel===m.id?"rgba(255,107,0,0.08)":"#111",cursor:modelSaving?"not-allowed":"pointer",opacity:modelSaving&&currentModel!==m.id?0.5:1,transition:"all 0.15s"}}>
+            <div>
+              <div style={{display:"flex",alignItems:"center",gap:8,marginBottom:4}}>
+                <div style={{fontSize:14,fontWeight:700,color:currentModel===m.id?"#FF6B00":"#fff"}}>{m.label}</div>
+                {currentModel===m.id&&<div style={{fontSize:10,background:"rgba(255,107,0,0.15)",color:"#FF6B00",padding:"2px 8px",borderRadius:20,fontWeight:800}}>ACTIVE</div>}
+              </div>
+              <div style={{fontSize:12,color:"#666",marginBottom:2}}>{m.desc}</div>
+              <div style={{fontSize:11,color:"#444"}}>{m.cost}</div>
+            </div>
+            <div style={{width:20,height:20,borderRadius:"50%",border:"2px solid "+(currentModel===m.id?"#FF6B00":"#333"),background:currentModel===m.id?"#FF6B00":"transparent",flexShrink:0}}/>
+          </div>
+        ))}
+      </div>
       <div style={{display:"flex",gap:12}}>
         <button onClick={handleSave} style={{background:saved?"#00D084":C.orange,border:"none",color:"#fff",borderRadius:10,padding:"14px 28px",fontSize:14,fontWeight:800,cursor:"pointer",transition:"background 0.3s"}}>{saved?"Saved!":"Save Changes"}</button>
         <button onClick={()=>window.location.reload()} style={{background:C.card2,border:`1px solid ${C.border}`,color:"#fff",borderRadius:10,padding:"14px 28px",fontSize:14,cursor:"pointer"}}>Cancel</button>
@@ -796,6 +837,7 @@ function Settings({scrapePaused, setScrapePaused}) {
 
 export default function RarisDashboard() {
   const [active,setActive] = useState("dashboard");
+  const [rariifyIdea, setRariifyIdea] = useState("");
   const handleSaveScript = async (data) => { try { await fetch("https://incogitable-orville-superwise.ngrok-free.dev/api/script", { method:"POST", headers:{"Content-Type":"application/json","ngrok-skip-browser-warning":"true"}, body:JSON.stringify({...data,saveOnly:true}) }); } catch(e) {} };
   const [realIdeas, setRealIdeas] = useState([]);
   const [apiOnline, setApiOnline] = useState(false);
@@ -839,9 +881,9 @@ export default function RarisDashboard() {
     {id:"settings",label:"Settings",icon:"⚙"},
   ];
   const pages = {
-    dashboard:<Dashboard realIdeas={realIdeas} lastUpdated={ideasLastUpdated} profileData={profileData}/>,intelligence:<Intelligence/>,
+    dashboard:<Dashboard realIdeas={realIdeas} lastUpdated={ideasLastUpdated} profileData={profileData}/>,intelligence:<Intelligence onRariify={(hook)=>{ setRariifyIdea(hook); setActive("scriptwriter"); }}/>,
     revenue:<Revenue/>,goals:<Goals profileData={profileData}/>,
-    sakuraos:<SakuraOS/>,ideasbank:<IdeasBank/>,scripts:<Scripts/>,scriptwriter:<ScriptWriter onSaveScript={handleSaveScript}/>,board:<Board/>,settings:<Settings scrapePaused={scrapePaused} setScrapePaused={setScrapePaused}/>
+    sakuraos:<SakuraOS/>,ideasbank:<IdeasBank/>,scripts:<Scripts/>,scriptwriter:<ScriptWriter onSaveScript={handleSaveScript} prefillIdea={rariifyIdea} onIdeaUsed={()=>setRariifyIdea("")}/>,board:<Board/>,settings:<Settings scrapePaused={scrapePaused} setScrapePaused={setScrapePaused}/>
   };
   return (
     <div style={{display:"flex",height:"100vh",background:C.bg,fontFamily:"system-ui,-apple-system,sans-serif",overflow:"hidden"}}>

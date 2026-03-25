@@ -361,7 +361,14 @@ export default function ScriptWriter({onSaveScript}){
             </div>
           )}
 
-          {!showRight&&(
+          {hookLoading&&!hookOptions&&(
+            <div style={{background:"#161616",borderRadius:16,border:"1px solid rgba(124,58,237,0.3)",padding:"80px 40px",display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",gap:24,minHeight:420}}>
+              <div className="sw-spinner"/>
+              <div style={{fontSize:20,fontWeight:800,color:"#fff",textAlign:"center",lineHeight:1.5}}>Generating your hooks...</div>
+              <div style={{fontSize:12,color:"#555",textAlign:"center"}}>{hook} style · {toneObj.label} tone</div>
+            </div>
+          )}
+          {!hookLoading&&!hookOptions&&!scriptLoading&&!result&&(
             <div style={{background:"#161616",borderRadius:16,border:"1px dashed rgba(255,255,255,0.07)",padding:"80px 40px",display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",gap:12,minHeight:420}}>
               <div style={{fontSize:32}}>✦</div>
               <div style={{fontSize:16,fontWeight:700,color:"#444"}}>Your hooks will appear here</div>
