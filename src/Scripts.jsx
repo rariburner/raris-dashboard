@@ -214,7 +214,9 @@ export default function Scripts() {
   const [confirmDelete, setConfirmDelete] = useState(null);
 
   useEffect(() => {
-    getScripts().then(data => { setScripts(Array.isArray(data) ? data : []); setLoading(false); }).catch(() => setLoading(false));
+    // API call commented out — localhost API is offline
+    // getScripts().then(data => { setScripts(Array.isArray(data) ? data : []); setLoading(false); }).catch(() => setLoading(false));
+    setLoading(false);
   }, []);
 
   const handleDelete = (id) => {
@@ -302,8 +304,8 @@ export default function Scripts() {
       {!loading && filtered.length === 0 && (
         <div style={{ color: C.muted, textAlign: "center", padding: 60 }}>
           <div style={{ fontSize: 32, marginBottom: 12 }}>✦</div>
-          <div style={{ fontSize: 16, fontWeight: 700, color: "#fff", marginBottom: 8 }}>No scripts yet</div>
-          <div style={{ fontSize: 13 }}>Click "Script →" on any idea to generate your first script.</div>
+          <div style={{ fontSize: 16, fontWeight: 700, color: "#fff", marginBottom: 8 }}>No scripts saved yet</div>
+          <div style={{ fontSize: 13 }}>Generate a script from the Idea to Script page. Scripts will appear here once saved.</div>
         </div>
       )}
 

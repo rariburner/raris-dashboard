@@ -1,9 +1,15 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { generateHooks as apiGenerateHooks, generateCustomScript } from "./api.js";
 
 const C = { orange:"#FF6B00",green:"#00D084",purple:"#7C3AED" };
 const FONT = "-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif";
-const FORMATS = ["Format 1 — Social Leverage","Format 2 — Curiosity / Elimination","Format 3 — Value Drop","Format 4 — Storytelling","Format 5 — Bold Take"];
+const FORMATS = [
+  {id:"social-leverage",label:"Social Leverage",desc:"Drop a big creator's name to borrow their gravity. Contrarian angle nobody considered."},
+  {id:"curiosity-elimination",label:"Curiosity / Elimination",desc:"Create an info gap. Spend 60% crossing out wrong answers before the real reveal."},
+  {id:"value-drop",label:"Value Drop",desc:"Structured, practical, immediately useful. Ends with ManyChat CTA if talking head."},
+  {id:"storytelling",label:"Storytelling",desc:"Story is the hook, lesson is the payoff. Relatable over aspirational."},
+  {id:"bold-take",label:"Bold Take",desc:"One strong opinion, no hedging. Reversal structure hits hardest."},
+];
 const TONES = [
   {id:"convicted",label:"Convicted",desc:"Strong, hits hard. You have a point and you're making it."},
   {id:"professional",label:"Professional",desc:"Structured, credible, educational. Clean delivery."},
@@ -58,8 +64,27 @@ function AIContextMenu({x,y,onAction,onClose}){
   );
 }
 
-export default function ScriptWriter({onSaveScript}){
+export default function ScriptWriter({onSaveScript, prefillIdea, rariifyResult, onIdeaUsed}){
   const [idea,setIdea]=useState("");
+  const [rariifyData,setRariifyData]=useState(null);
+
+  useEffect(()=>{
+    if(prefillIdea){ setIdea(prefillIdea); setResult(null); setHookOptions(null); setRariifyData(null); }
+  },[prefillIdea]);
+
+  useEffect(()=>{
+    if(rariifyResult?.script){
+      setIdea(rariifyResult.caption||'');
+      setRariifyData(rariifyResult);
+      setResult(rariifyResult.script);
+      const lines=rariifyResult.script.split("\n\n").filter(Boolean);
+      setHookText(lines[0]||'');
+      setBodyText(lines.slice(1,-1).join("\n\n")||lines[1]||'');
+      setCtaText(lines[lines.length-1]||'');
+      setSuggestions([]);
+      setTimeout(()=>setFadeIn(true),50);
+    }
+  },[rariifyResult]);
   const [format,setFormat]=useState(FORMATS[0]);
   const [tone,setTone]=useState("convicted");
   const [hook,setHook]=useState(HOOKS[0].name);
@@ -100,14 +125,14 @@ export default function ScriptWriter({onSaveScript}){
       professional:"Write with structure and credibility. Educational, clean, authoritative without being stiff.",
       yap:"Write like you just picked up your phone and started talking. Mid-thought opener. Casual and real. No performance. Each sentence should make the next one feel necessary — not through structure but through genuine curiosity. The structure is invisible. It sounds like you just happened to be interesting."
     };
-    return "You are Sakura, writing a short-form video script for Mike Rari (@realmikerari).\n\nMike's voice: He is an observer. He notices something true, says it plainly, and moves on. He does not build to a crescendo. He does not preach. He points at something real and lets it land. One idea, one turn, done.\n\nTONE: "+toneInstructions[tone]+"\n\nRULES:\n- Do NOT force his personal stories ($400K, brand deals, 6 years) unless they naturally serve THIS specific idea\n- Mix sentence rhythm naturally — not every sentence the same length\n- Simple words, 7th grade reading level\n- One idea, said well, then stop\n\nRAW IDEA: "+idea+"\nFORMAT: "+format+"\nHOOK TO USE: "+(hookOverride||selectedHook)+"\nCTA: "+activeCta+"\nLENGTH: "+length.words+"\n\nWrite ONLY the script. Hook paragraph, then body, then CTA — separated by blank lines. Then write ---SUGGESTIONS--- followed by 3 one-line suggestions starting with •";
+    return "You are Sakura, writing a short-form video script for Mike Rari (@realmikerari).\n\nMike's voice: He is an observer. He notices something true, says it plainly, and moves on. He does not build to a crescendo. He does not preach. He points at something real and lets it land. One idea, one turn, done.\n\nTONE: "+toneInstructions[tone]+"\n\nRULES:\n- Do NOT force his personal stories ($400K, brand deals, 6 years) unless they naturally serve THIS specific idea\n- Mix sentence rhythm naturally — not every sentence the same length\n- Simple words, 7th grade reading level\n- One idea, said well, then stop\n\nRAW IDEA: "+idea+"\nFORMAT: "+format.label+"\nHOOK TO USE: "+(hookOverride||selectedHook)+"\nCTA: "+activeCta+"\nLENGTH: "+length.words+"\n\nWrite ONLY the script. Hook paragraph, then body, then CTA — separated by blank lines. Then write ---SUGGESTIONS--- followed by 3 one-line suggestions starting with •";
   };
 
   const generateHooks=async()=>{
     if(!idea.trim())return;
     setHookLoading(true);setHookOptions(null);setSelectedHook(null);setResult(null);setSaved(false);
     const suggestionLine=hookSuggestion.trim()?"\nExtra note from Mike: "+hookSuggestion:"";
-    const prompt="You are Sakura, writing hook options for Mike Rari (@realmikerari).\n\nMike's voice: Observer, nonchalant, convicted. He notices something true and says it plainly.\n\nGenerate exactly 3 different hook options for this video idea. Each hook should be 1-2 sentences max. Make each one feel distinctly different in approach.\n\nRAW IDEA: "+idea+"\nFORMAT: "+format+"\nHOOK STYLE: "+hook+"\nTONE: "+toneObj.label+suggestionLine+"\n\nRespond with exactly this format:\nHOOK 1: [hook text]\nHOOK 2: [hook text]\nHOOK 3: [hook text]";
+    const prompt="You are Sakura, writing hook options for Mike Rari (@realmikerari).\n\nMike's voice: Observer, nonchalant, convicted. He notices something true and says it plainly.\n\nGenerate exactly 3 different hook options for this video idea. Each hook should be 1-2 sentences max. Make each one feel distinctly different in approach.\n\nRAW IDEA: "+idea+"\nFORMAT: "+format.label+"\nHOOK STYLE: "+hook+"\nTONE: "+toneObj.label+suggestionLine+"\n\nRespond with exactly this format:\nHOOK 1: [hook text]\nHOOK 2: [hook text]\nHOOK 3: [hook text]";
     try{
       const res=await apiGenerateHooks(prompt);
       if(res.result){
@@ -168,7 +193,7 @@ export default function ScriptWriter({onSaveScript}){
   const handleSave=()=>{
     if(!result||!onSaveScript)return;
     const fullScript=[hookText,bodyText,ctaText].filter(Boolean).join("\n\n");
-    onSaveScript({hook:idea.substring(0,120),script:fullScript,format,cta:activeCta,status:"Draft",date:new Date().toISOString(),category:"Other"});
+    onSaveScript({hook:idea.substring(0,120),script:fullScript,format:format.label,cta:activeCta,status:"Draft",date:new Date().toISOString(),category:"Other"});
     setSaved(true);
   };
 
@@ -213,7 +238,12 @@ export default function ScriptWriter({onSaveScript}){
           <div style={hasIdea?S.card:S.cardFaded}>
             <span style={S.lbl}>STEP 2 — FORMAT</span>
             <div style={{display:"flex",flexDirection:"column",gap:8}}>
-              {FORMATS.map(f=><button key={f} onClick={()=>setFormat(f)} style={fmtPill(format===f)}>{f}</button>)}
+              {FORMATS.map(f=>(
+                <button key={f.id} onClick={()=>setFormat(f)} style={{...fmtPill(format.id===f.id),display:"flex",flexDirection:"column",alignItems:"flex-start",textAlign:"left",height:"auto",padding:"10px 14px"}}>
+                  <div style={{fontWeight:700,fontSize:13}}>{f.label}</div>
+                  <div style={{fontSize:11,opacity:0.6,marginTop:3,fontWeight:400,lineHeight:1.4}}>{f.desc}</div>
+                </button>
+              ))}
             </div>
           </div>
 
@@ -316,7 +346,7 @@ export default function ScriptWriter({onSaveScript}){
               <div style={{fontSize:22,fontWeight:800,color:"#fff",textAlign:"center",lineHeight:1.5}}>Sakura is generating<br/>your script...</div>
               <div style={{fontSize:12,color:"#555",textAlign:"center",lineHeight:1.8}}>
                 Hook: <span style={{color:"#A78BFA"}}>{hook}</span><br/>
-                Format: <span style={{color:C.orange}}>{format.split(" — ")[0]}</span><br/>
+                Format: <span style={{color:C.orange}}>{format.label}</span><br/>
                 Tone: <span style={{color:"#aaa"}}>{toneObj.label}</span>
               </div>
             </div>
@@ -324,6 +354,17 @@ export default function ScriptWriter({onSaveScript}){
 
           {result&&(
             <div className={fadeIn?"sw-fade":""} style={{display:"flex",flexDirection:"column",gap:16,opacity:fadeIn?1:0}}>
+              {rariifyData?.analysis&&(
+                <div style={{background:"#0F0A1A",border:"1px solid rgba(124,58,237,0.3)",borderRadius:14,padding:"18px 22px"}}>
+                  <div style={{fontSize:12,fontWeight:800,color:C.purple,marginBottom:12,letterSpacing:0.5}}>✦ RARI-IFY ANALYSIS — @{rariifyData.account}</div>
+                  {rariifyData.analysis.split("\n").filter(l=>l.trim()).map((line,i)=>{
+                    const [label,...rest]=line.split(":");
+                    return rest.length>0
+                      ? <div key={i} style={{fontSize:12,marginBottom:6,lineHeight:1.5}}><span style={{color:C.purple,fontWeight:700}}>{label}:</span><span style={{color:"#bbb"}}>{rest.join(":")}</span></div>
+                      : <div key={i} style={{fontSize:12,color:"#888",marginBottom:4}}>{line}</div>;
+                  })}
+                </div>
+              )}
               {inlineLoading&&<div style={{fontSize:12,color:C.purple,textAlign:"center",padding:"8px",background:"rgba(124,58,237,0.08)",borderRadius:8}}>✦ Sakura is rewriting...</div>}
               <div style={{background:"#161616",borderRadius:16,border:"1px solid rgba(255,255,255,0.07)",overflow:"hidden"}}>
                 <div style={{padding:"18px 24px",borderBottom:"1px solid rgba(255,255,255,0.07)",background:"#161616",display:"flex",justifyContent:"space-between",alignItems:"center"}}>

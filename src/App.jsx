@@ -1,4 +1,5 @@
 import IdeasBank from "./IdeasBank.jsx";
+import Research from "./Research.jsx";
 import Scripts from "./Scripts.jsx";
 import ScriptWriter from "./ScriptWriter.jsx";
 import Board from "./Board.jsx";
@@ -133,15 +134,15 @@ function Dashboard({realIdeas=[], lastUpdated=null, profileData={followers:0,pos
       <h1 style={{fontSize:48,fontWeight:900,color:"#fff",marginBottom:32,letterSpacing:-1,lineHeight:1}}>Good morning, Mike.</h1>
       <div style={{display:"grid",gridTemplateColumns:"repeat(4,1fr)",gap:16,marginBottom:36}}>
         {[
-          {label:"Followers",val:profileData.followers?profileData.followers.toLocaleString():"—",sub:"@realmikerari",grad:"linear-gradient(135deg,#FF6B00,#DC2626)"},
-          {label:"Monthly Views",val:"—",sub:"Connect analytics",grad:"linear-gradient(135deg,#7C3AED,#3B82F6)"},
-          {label:"Course Revenue",val:"$0",sub:"0 sales this month",grad:"linear-gradient(135deg,#00D084,#0891B2)"},
-          {label:"Posts Published",val:(profileData.postsThisMonth||0).toString(),sub:"This month",grad:null},
+          {label:"Followers",val:profileData.followers?profileData.followers.toLocaleString():"—",sub:"@realmikerari",accent:C.orange},
+          {label:"Monthly Views",val:"—",sub:"Connect analytics",accent:C.purple},
+          {label:"Course Revenue",val:"—",sub:"Connect MON3TIZE",accent:C.green},
+          {label:"Posts Published",val:(profileData.postsThisMonth||0).toString(),sub:"This month",accent:C.blue},
         ].map((s,i)=>(
-          <div key={i} style={{background:s.grad||C.card,backgroundImage:s.grad,borderRadius:18,padding:"24px 22px",border:s.grad?"none":`1px solid ${C.border}`}}>
-            <div style={{fontSize:13,color:s.grad?"rgba(255,255,255,0.75)":C.muted,marginBottom:8}}>{s.label}</div>
+          <div key={i} style={{background:C.card,borderRadius:18,padding:"24px 22px",border:`1px solid ${C.border}`,borderTop:`2px solid ${s.accent}`}}>
+            <div style={{fontSize:13,color:C.muted,marginBottom:8}}>{s.label}</div>
             <div style={{fontSize:34,fontWeight:900,color:"#fff",lineHeight:1,marginBottom:8}}>{s.val}</div>
-            <div style={{fontSize:13,color:s.grad?"rgba(255,255,255,0.65)":C.muted}}>{s.sub}</div>
+            <div style={{fontSize:13,color:C.muted}}>{s.sub}</div>
           </div>
         ))}
       </div>
@@ -518,12 +519,12 @@ function Revenue() {
 }
 
 function Goals({profileData={followers:0,posts:0,lastUpdated:null}}) {
-  const bangkokDays = Math.ceil((new Date("2026-08-01")-new Date())/(1000*60*60*24));
+  const bangkokDays = Math.ceil((new Date("2026-11-01")-new Date())/(1000*60*60*24));
   const goals = [
     {label:"Followers",icon:"📈",current:profileData.followers||0,target:250000,unit:"",deadline:"Dec 2026",color:C.orange,bg:"#FF6B0022"},
-    {label:"Monthly Revenue",icon:"💰",current:0,target:25000,unit:"$",deadline:"Aug 2026",color:C.green,bg:"#00D08422"},
+    {label:"Monthly Revenue",icon:"💰",current:0,target:10000,unit:"$",deadline:"Aug 2026",color:C.green,bg:"#00D08422"},
     {label:"Course Sales",icon:"🛒",current:0,target:50,unit:"",deadline:"Jun 2026",color:C.purple,bg:"#7C3AED22"},
-    {label:"Posts This Month",icon:"📄",current:profileData.postsThisMonth||0,target:120,unit:"",deadline:"Mar 31, 2026",color:C.blue,bg:"#3B82F622"},
+    {label:"Posts This Month",icon:"📄",current:profileData.postsThisMonth||0,target:120,unit:"",deadline:"Dec 31, 2026",color:C.blue,bg:"#3B82F622"},
   ];
   return (
     <div style={{padding:"36px 40px",overflowY:"auto",height:"100%"}}>
@@ -566,13 +567,13 @@ function Goals({profileData={followers:0,posts:0,lastUpdated:null}}) {
         </div>
         <div style={{fontSize:80,fontWeight:900,color:"#fff",lineHeight:1,marginBottom:8}}>{bangkokDays}</div>
         <div style={{fontSize:18,color:"rgba(255,255,255,0.8)"}}>days remaining</div>
-        <div style={{fontSize:14,color:"rgba(255,255,255,0.65)",marginTop:8}}>Until the big move to Bangkok — August 2026</div>
+        <div style={{fontSize:14,color:"rgba(255,255,255,0.65)",marginTop:8}}>Until the big move to Bangkok — November 1, 2026</div>
       </div>
       <div style={{display:"grid",gridTemplateColumns:"repeat(3,1fr)",gap:16}}>
         {[
           {label:"Weekly Growth Rate",val:"+0%",sub:"Followers per week",color:C.green},
-          {label:"Avg. Daily Revenue",val:"$0",sub:"This month",color:C.green},
-          {label:"Consistency Streak",val:"0 days",sub:"Daily posts",color:C.orange},
+          {label:"Avg. Daily Revenue",val:"—",sub:"Connect MON3TIZE",color:C.muted},
+          {label:"Consistency Streak",val:"—",sub:"Not tracked yet",color:C.muted},
         ].map((s,i)=>(
           <div key={i} style={{background:C.card,borderRadius:14,padding:"20px 22px",border:`1px solid ${C.border}`}}>
             <div style={{fontSize:13,color:C.muted,marginBottom:8}}>{s.label}</div>
@@ -836,8 +837,10 @@ function Settings({scrapePaused, setScrapePaused}) {
 }
 
 export default function RarisDashboard() {
-  const [active,setActive] = useState("dashboard");
+  const [active,setActive] = useState(()=>localStorage.getItem('raris_active_tab')||'dashboard');
+  const navigateTo = (id) => { setActive(id); localStorage.setItem('raris_active_tab', id); };
   const [rariifyIdea, setRariifyIdea] = useState("");
+  const [rariifyResult, setRariifyResult] = useState(null);
   const handleSaveScript = async (data) => { try { await fetch("https://incogitable-orville-superwise.ngrok-free.dev/api/script", { method:"POST", headers:{"Content-Type":"application/json","ngrok-skip-browser-warning":"true"}, body:JSON.stringify({...data,saveOnly:true}) }); } catch(e) {} };
   const [realIdeas, setRealIdeas] = useState([]);
   const [apiOnline, setApiOnline] = useState(false);
@@ -874,16 +877,15 @@ export default function RarisDashboard() {
   const nav = [
     {id:"dashboard",label:"Dashboard",icon:"⊞"},
     {id:"intelligence",label:"Intelligence",icon:"◎"},
-    {id:"revenue",label:"Revenue",icon:"$"},
     {id:"goals",label:"Goals",icon:"◎"},
     {id:"sakuraos",label:"SakuraOS",icon:"✦"},
-    {id:"ideasbank",label:"Ideas Bank",icon:"◈"},{id:"scripts",label:"Scripts",icon:"✍"},{id:"scriptwriter",label:"Idea to Script",icon:"✦"},{id:"board",label:"Board",icon:"▦"},
+    {id:"research",label:"Research",icon:"◎"},{id:"ideasbank",label:"Ideas Bank",icon:"◈"},{id:"scripts",label:"Scripts",icon:"✍"},{id:"scriptwriter",label:"Idea to Script",icon:"✦"},{id:"board",label:"Board",icon:"▦"},
     {id:"settings",label:"Settings",icon:"⚙"},
   ];
   const pages = {
-    dashboard:<Dashboard realIdeas={realIdeas} lastUpdated={ideasLastUpdated} profileData={profileData}/>,intelligence:<Intelligence onRariify={(hook)=>{ setRariifyIdea(hook); setActive("scriptwriter"); }}/>,
-    revenue:<Revenue/>,goals:<Goals profileData={profileData}/>,
-    sakuraos:<SakuraOS/>,ideasbank:<IdeasBank/>,scripts:<Scripts/>,scriptwriter:<ScriptWriter onSaveScript={handleSaveScript} prefillIdea={rariifyIdea} onIdeaUsed={()=>setRariifyIdea("")}/>,board:<Board/>,settings:<Settings scrapePaused={scrapePaused} setScrapePaused={setScrapePaused}/>
+    dashboard:<Dashboard realIdeas={realIdeas} lastUpdated={ideasLastUpdated} profileData={profileData}/>,intelligence:<Intelligence onRariify={(hook)=>{ setRariifyIdea(hook); navigateTo("scriptwriter"); }}/>,
+    goals:<Goals profileData={profileData}/>,
+    sakuraos:<SakuraOS/>,research:<Research onRariify={(reel)=>{ setRariifyIdea(reel.caption||reel.hook||''); setRariifyResult((reel.analysis&&reel.script)?reel:null); navigateTo('scriptwriter'); }}/>,ideasbank:<IdeasBank/>,scripts:<Scripts/>,scriptwriter:<ScriptWriter onSaveScript={handleSaveScript} prefillIdea={rariifyIdea} rariifyResult={rariifyResult} onIdeaUsed={()=>{ setRariifyIdea(''); setRariifyResult(null); }}/>,board:<Board/>,settings:<Settings scrapePaused={scrapePaused} setScrapePaused={setScrapePaused}/>
   };
   return (
     <div style={{display:"flex",height:"100vh",background:C.bg,fontFamily:"system-ui,-apple-system,sans-serif",overflow:"hidden"}}>
@@ -894,7 +896,7 @@ export default function RarisDashboard() {
         </div>
         <nav style={{flex:1,padding:"0 10px"}}>
           {nav.map(item=>(
-            <div key={item.id} onClick={()=>setActive(item.id)}
+            <div key={item.id} onClick={()=>navigateTo(item.id)}
               style={{display:"flex",alignItems:"center",gap:12,padding:"11px 12px",borderRadius:10,cursor:"pointer",marginBottom:2,background:active===item.id?"rgba(255,107,0,0.12)":"transparent",borderLeft:active===item.id?`3px solid ${C.orange}`:"3px solid transparent",transition:"all 0.15s"}}>
               <span style={{fontSize:16,color:active===item.id?C.orange:C.muted}}>{item.icon}</span>
               <span style={{fontSize:14,fontWeight:active===item.id?700:400,color:active===item.id?C.orange:C.muted}}>{item.label}</span>

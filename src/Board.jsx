@@ -1,4 +1,24 @@
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect, useCallback } from "react";
+
+const API = "https://incogitable-orville-superwise.ngrok-free.dev";
+
+async function fetchBoard() {
+  try {
+    const r = await fetch(API + '/api/board', { headers: { 'ngrok-skip-browser-warning': 'true' } });
+    const d = await r.json();
+    return Array.isArray(d.cards) ? d.cards : [];
+  } catch { return null; }
+}
+
+async function saveBoard(cards) {
+  try {
+    await fetch(API + '/api/board', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'ngrok-skip-browser-warning': 'true' },
+      body: JSON.stringify({ cards })
+    });
+  } catch {}
+}
 
 const C = {
   bg: "#0D0D0D", card: "#161616", card2: "#1E1E1E", sidebar: "#111111",
@@ -17,18 +37,24 @@ const CATEGORY_COLORS = {
 const COLUMNS = ["Backlog", "This Week", "In Progress", "Review", "Done"];
 
 const initialCards = [
-  { id: 1, title: "Add Board page to dashboard", assignee: "SAKURA", priority: "HIGH", category: "tech", due: "2026-03-21", description: "Full kanban board with drag and drop", column: "In Progress", actionRequired: true },
-  { id: 2, title: "Fix dashboard responsiveness", assignee: "SAKURA", priority: "HIGH", category: "tech", due: "2026-03-22", description: "Dashboard doesn't fit screen perfectly yet", column: "This Week", actionRequired: false },
-  { id: 3, title: "Connect real data to dashboard", assignee: "SAKURA", priority: "HIGH", category: "tech", due: "2026-03-28", description: "Sakura updates stats via Telegram commands", column: "Backlog", actionRequired: false },
-  { id: 4, title: "6am daily cron automation", assignee: "SAKURA", priority: "HIGH", category: "tech", due: "2026-04-01", description: "Scrape + transcribe + analyze + generate ideas", column: "Backlog", actionRequired: false },
-  { id: 5, title: "Mike Rari-ify feature", assignee: "SAKURA", priority: "MED", category: "sakura", due: "2026-04-07", description: "Forward any reel to Sakura, she outputs Mike's version", column: "Backlog", actionRequired: false },
-  { id: 6, title: "Record 5 videos this week", assignee: "MIKE", priority: "HIGH", category: "content", due: "2026-03-22", description: "Batch record using scripted ideas from Sakura", column: "This Week", actionRequired: true },
-  { id: 7, title: "Script 10 hooks from Intelligence", assignee: "MIKE", priority: "MED", category: "content", due: "2026-03-23", description: "Use top performing competitor hooks as inspiration", column: "This Week", actionRequired: false },
-  { id: 8, title: "Set up ManyChat keyword flows", assignee: "MIKE", priority: "HIGH", category: "business", due: "2026-03-25", description: "Trigger DMs from comment keywords", column: "In Progress", actionRequired: true },
-  { id: 9, title: "Launch viral masterclass course", assignee: "MIKE", priority: "HIGH", category: "business", due: "2026-04-15", description: "MON3TIZE first course drop", column: "Backlog", actionRequired: false },
-  { id: 10, title: "Vision analysis for reels", assignee: "SAKURA", priority: "MED", category: "sakura", due: "2026-04-10", description: "Sakura sees visual hooks, text overlays, editing style", column: "Backlog", actionRequired: false },
-  { id: 11, title: "Session sync briefing system", assignee: "SAKURA", priority: "MED", category: "sakura", due: "2026-04-05", description: "End of Claude session generates briefing Sakura ingests", column: "Backlog", actionRequired: false },
-  { id: 12, title: "Post 2 reels today", assignee: "MIKE", priority: "HIGH", category: "content", due: "2026-03-20", description: "", column: "Review", actionRequired: false },
+  // Archived (overdue) cards
+  { id: 1, title: "Add Board page to dashboard", assignee: "SAKURA", priority: "HIGH", category: "tech", due: "2026-03-21", description: "Full kanban board with drag and drop", column: "Done", actionRequired: false },
+  { id: 2, title: "Fix dashboard responsiveness", assignee: "SAKURA", priority: "HIGH", category: "tech", due: "2026-03-22", description: "Dashboard doesn't fit screen perfectly yet", column: "Done", actionRequired: false },
+  { id: 3, title: "Connect real data to dashboard", assignee: "SAKURA", priority: "HIGH", category: "tech", due: "2026-03-28", description: "Sakura updates stats via Telegram commands", column: "Done", actionRequired: false },
+  { id: 4, title: "6am daily cron automation", assignee: "SAKURA", priority: "HIGH", category: "tech", due: "2026-04-01", description: "Scrape + transcribe + analyze + generate ideas", column: "Done", actionRequired: false },
+  { id: 5, title: "Mike Rari-ify feature", assignee: "SAKURA", priority: "MED", category: "sakura", due: "2026-04-07", description: "Forward any reel to Sakura, she outputs Mike's version", column: "Done", actionRequired: false },
+  { id: 6, title: "Record 5 videos this week", assignee: "MIKE", priority: "HIGH", category: "content", due: "2026-03-22", description: "Batch record using scripted ideas from Sakura", column: "Done", actionRequired: false },
+  { id: 7, title: "Script 10 hooks from Intelligence", assignee: "MIKE", priority: "MED", category: "content", due: "2026-03-23", description: "Use top performing competitor hooks as inspiration", column: "Done", actionRequired: false },
+  { id: 8, title: "Set up ManyChat keyword flows", assignee: "MIKE", priority: "HIGH", category: "business", due: "2026-03-25", description: "Trigger DMs from comment keywords", column: "Done", actionRequired: false },
+  { id: 9, title: "Launch viral masterclass course", assignee: "MIKE", priority: "HIGH", category: "business", due: "2026-04-15", description: "MON3TIZE first course drop", column: "Done", actionRequired: false },
+  { id: 10, title: "Vision analysis for reels", assignee: "SAKURA", priority: "MED", category: "sakura", due: "2026-04-10", description: "Sakura sees visual hooks, text overlays, editing style", column: "Done", actionRequired: false },
+  { id: 11, title: "Session sync briefing system", assignee: "SAKURA", priority: "MED", category: "sakura", due: "2026-04-05", description: "End of Claude session generates briefing Sakura ingests", column: "Done", actionRequired: false },
+  { id: 12, title: "Post 2 reels today", assignee: "MIKE", priority: "HIGH", category: "content", due: "2026-03-20", description: "", column: "Done", actionRequired: false },
+  // Active cards
+  { id: 13, title: "Finish Viral Masterclass course", assignee: "MIKE", priority: "HIGH", category: "business", due: "2026-06-15", description: "Complete all 22 lessons and get the course ready to launch", column: "In Progress", actionRequired: true },
+  { id: 14, title: "Finish 4 free resources", assignee: "MIKE", priority: "HIGH", category: "business", due: "2026-06-15", description: "Free lead magnet resources tied to ManyChat CTAs", column: "This Week", actionRequired: true },
+  { id: 15, title: "Update morning idea pipeline to use PILLARS.md topics", assignee: "SAKURA", priority: "HIGH", category: "sakura", due: "2026-05-31", description: "Remap idea generation to pull from the 3 pillars: Going Viral, Creator Commentary, Yap", column: "Backlog", actionRequired: false },
+  { id: 16, title: "Plan first content batch for post-launch", assignee: "MIKE", priority: "MED", category: "content", due: "2026-06-20", description: "Plan the first 20-40 video batch after course launches June 15", column: "Backlog", actionRequired: false },
 ];
 
 const sakuraQueue = [
@@ -151,6 +177,18 @@ function KanbanCard({ card, onDragStart, onClick }) {
 
 export default function Board() {
   const [cards, setCards] = useState(initialCards);
+  const [apiLoaded, setApiLoaded] = useState(false);
+
+  useEffect(() => {
+    fetchBoard().then(data => {
+      if (data && data.length > 0) { setCards(data); setApiLoaded(true); }
+    });
+  }, []);
+
+  const persistCards = useCallback((updated) => {
+    setCards(updated);
+    saveBoard(updated);
+  }, []);
   const [filter, setFilter] = useState("All");
   const [collapsed, setCollapsed] = useState({});
   const [quickAdd, setQuickAdd] = useState({});
@@ -172,22 +210,26 @@ export default function Board() {
 
   const handleDrop = (col) => {
     if (!dragId) return;
-    setCards(prev => prev.map(c => c.id === dragId ? { ...c, column: col } : c));
+    const updated = cards.map(c => c.id === dragId ? { ...c, column: col } : c);
+    persistCards(updated);
     setDragId(null);
   };
 
   const handleQuickAdd = (col) => {
     const title = quickAdd[col]?.trim();
     if (!title) return;
-    setCards(prev => [...prev, {
+    const newCard = {
       id: nextId.current++, title, assignee: "MIKE", priority: "MED",
       category: "content", due: "", description: "", column: col, actionRequired: false,
-    }]);
+    };
+    const updated = [...cards, newCard];
+    persistCards(updated);
     setQuickAdd(prev => ({ ...prev, [col]: "" }));
   };
 
   const handleSave = (updated) => {
-    setCards(prev => prev.map(c => c.id === updated.id ? updated : c));
+    const newCards = cards.map(c => c.id === updated.id ? updated : c);
+    persistCards(newCards);
   };
 
   const statusColor = { DONE: C.green, RUNNING: C.blue, QUEUED: C.muted };
